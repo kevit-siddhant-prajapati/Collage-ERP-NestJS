@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { StaffModule } from './staff/staff.module';
 import { AdminModule } from './admin/admin.module';
+import { AttendanceModule } from './attendance/attendance.module';
 
 @Module({
   imports: [
@@ -19,8 +20,10 @@ import { AdminModule } from './admin/admin.module';
     StudentModule,
     StaffModule,
     AdminModule,
+    AttendanceModule,
     ],
     controllers: [AppController],
     providers: [AppService],
 })
+
 export class AppModule {}

@@ -79,4 +79,4 @@ export class Staff{
 }
 
 export const StaffSchema = SchemaFactory.createForClass(Staff)
-export const staffSchema = mongoose.model('Staff', StaffSchema)
+export const StaffModel = mongoose.model('Staff', StaffSchema)

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Staff } from './schemas/staff.schema';
+import { Staff, StaffSchema } from './schemas/staff.schema';
 import mongoose from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as jwt from 'jsonwebtoken'
@@ -16,6 +16,7 @@ export class StaffService {
 
     async findAll() : Promise<Staff[]>{
         const staffs = await this.StaffModel.find({})
+        //console.dir(StaffSchema.obj)
         return staffs;
     }
 
