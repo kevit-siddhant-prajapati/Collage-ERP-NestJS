@@ -12,7 +12,7 @@ import { JwtService } from '@nestjs/jwt';
   ],
   providers: [StaffService, JwtService],
   controllers: [StaffController],
-  exports : [StaffService, MongooseModule.forFeature([{ name: 'Staff', schema : StaffSchema}])]
+   exports : [StaffService]
 })
 export class StaffModule {
 

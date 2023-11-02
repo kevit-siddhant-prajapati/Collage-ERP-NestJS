@@ -3,6 +3,7 @@ import { StudentService } from './student.service';
 import { Student } from './schemas/student.schema';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('students')
 export class StudentController {
@@ -38,6 +39,13 @@ export class StudentController {
         @Param('id') id: string
     ) {
         return this.studentService.deleteOne(id)
+    }
+
+    @Post('login')
+    async loginStudent(
+        @Body() credencials :LoginUserDto
+    ) {
+        return this.studentService.loginStudent(credencials)
     }
 
 }

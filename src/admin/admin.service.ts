@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Admin } from './schemas/admin.schema';
 import mongoose from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
-import * as jwt from 'jsonwebtoken'
+import { UserMiddleware } from 'src/middleware/user.middleware';
 
 @Injectable()
 export class AdminService {
@@ -16,13 +16,17 @@ export class AdminService {
 
     async findAll() : Promise<Admin[]>{
         const admins = await this.AdminModel.find({})
-        return admins;
+        const publicAdmin = new UserMiddleware()
+        const secureAdmin = admins.map(admin => publicAdmin.getPublicProfile(admin))
+        return secureAdmin;
     }
 
 
     async findById(id: string) : Promise<Admin>{
       const admin = await this.AdminModel.findById(id)
-      return admin;
+      const publicAdmin = new UserMiddleware()
+      const secureAdmin = publicAdmin.getPublicProfile(admin)
+      return secureAdmin;
     }
 
 
@@ -33,13 +37,8 @@ export class AdminService {
       }
       
       try {
-        const payload = {
-          id : newAdmin._id 
-        }
-        const token = await jwt.sign(payload, "thisIsSecretJWTWebToken")
-        console.log(token)
-        newAdmin.tokens.push({ token : token})
-        await newAdmin.save()
+        const publicAdmin = new UserMiddleware()
+        publicAdmin.generateAuthToken(newAdmin)
         return newAdmin
       } catch(e){
         console.log(e)
@@ -57,6 +56,8 @@ export class AdminService {
       if(!updatedAdmin){
         throw new NotFoundException('Given admin not found')
       }
+      const publicAdmin = new UserMiddleware()
+      publicAdmin.getPublicProfile(updatedAdmin)
       return updatedAdmin
     }
 

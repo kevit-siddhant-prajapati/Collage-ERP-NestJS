@@ -1,8 +1,6 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// import { StudentController } from './student/student.controller';
-// import { StudentService } from './student/student.service';
 import { StudentModule } from './student/student.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -26,4 +24,5 @@ import { AttendanceModule } from './attendance/attendance.module';
     providers: [AppService],
 })
 
-export class AppModule {}
+export class AppModule {
+}

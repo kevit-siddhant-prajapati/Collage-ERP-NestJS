@@ -1,28 +1,31 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Staff, StaffSchema } from './schemas/staff.schema';
+import { Staff } from './schemas/staff.schema';
 import mongoose from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
-import * as jwt from 'jsonwebtoken'
+import { UserMiddleware } from 'src/middleware/user.middleware';
 
 @Injectable()
 export class StaffService {
+    AttendanceModel: any;
     constructor(
         @InjectModel(Staff.name)
         private StaffModel : mongoose.Model<Staff>,
-        private jwtService : JwtService
     ) {}
 
 
     async findAll() : Promise<Staff[]>{
         const staffs = await this.StaffModel.find({})
-        //console.dir(StaffSchema.obj)
-        return staffs;
+        const publicStaff = new UserMiddleware()
+        const secureStaff = staffs.map(staff => publicStaff.getPublicProfile(staff))
+        return secureStaff;
     }
 
 
     async findById(id: string) : Promise<Staff>{
       const staff = await this.StaffModel.findById(id)
+      const publicStaff = new UserMiddleware()
+      publicStaff.getPublicProfile(staff)
       return staff;
     }
 
@@ -32,15 +35,9 @@ export class StaffService {
       if(!newStaff){
         throw new BadRequestException('Enter valid Staffdata ')
       }
-      
       try {
-        const payload = {
-          id : newStaff._id 
-        }
-        const token = await jwt.sign(payload, "thisIsSecretJWTWebToken")
-        console.log(token)
-        newStaff.tokens.push({ token : token})
-        await newStaff.save()
+        const tokenGenerator = new UserMiddleware()
+        tokenGenerator.generateAuthToken(newStaff)
         return newStaff
       } catch(e){
         console.log(e)
@@ -58,12 +55,13 @@ export class StaffService {
       if(!updatedStaff){
         throw new NotFoundException('Given staff not found')
       }
+      const publicStudent = new UserMiddleware()
+      publicStudent.getPublicProfile(updatedStaff)
       return updatedStaff
     }
-
     
     async deleteOne(id : string) {
-      const deletedStaff = await this.StaffModel.findByIdAndDelete(id)
-      return deletedStaff
+      const staff = await this.StaffModel.findByIdAndDelete(id)
+      await this.AttendanceModel.deleteMany({ userId : staff._id})
     }
 }

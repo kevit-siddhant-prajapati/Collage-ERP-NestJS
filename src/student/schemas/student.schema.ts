@@ -1,7 +1,6 @@
 import { Schema, Prop, SchemaFactory, raw } from "@nestjs/mongoose";
 import validator from "validator";
-import * as jwt from "jsonwebtoken"
-import * as bcrypt from "bcrypt"
+import * as bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
 @Schema({
@@ -96,36 +95,23 @@ export class Student{
       })
       tokens: Array<{ token: string }>;
 
+
 }
 
 
 export const StudentSchema = SchemaFactory.createForClass(Student)
 export const StudentModel = mongoose.model('Student', StudentSchema)
 
-StudentSchema.methods.generateAuthToken = async function(){
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const student = this
-
-    //generate token from student._id and SECRET Code that is expires in 1H.
-    const token = jwt.sign({_id : student._id.toString()}, process.env.JWT_SECRET_CODE, {expiresIn : '1h'})
-    student.tokens = student.tokens.concat({token})
-    //console.log(`token of model ${token}`)
-    await student.save()
-    return token
-}
-
-// StudentSchema.statics.findByCredentials = async (email: string, password: string): Promise<Student | null> => {
-//     const student: any = await StudentModel.findOne({ email });
-  
-//     if (!student) {
-//       // Instead of throwing an error, you can return null when the student is not found
-//       return null;
-//     }
-  
-//     const isMatch = await bcrypt.compare(password, student.password);
-//     if (!isMatch) {
-//       throw new Error('Password is incorrect');
-//     }
-  
-//     return student;
-//   };
+StudentSchema.pre('save', async function (next) {
+    const student = this;
+    try {
+        //check if password is change or not
+        if (student.isModified('password')) {
+            const hashedpassword = await bcrypt.hash(student.password, 8); //generate hash password from student's password 
+            student.password = hashedpassword.toString();  //overwrite hash password in student password
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
+});

@@ -1,30 +1,32 @@
-import { BadRequestException, HttpCode, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpCode, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Student } from './schemas/student.schema';
+import { Student, StudentSchema } from './schemas/student.schema';
 import * as mongoose from 'mongoose';
-import { JwtService } from '@nestjs/jwt';
-import * as jwt from 'jsonwebtoken'
+import { UserMiddleware } from '../middleware/user.middleware';
+import { Attendance } from 'src/attendance/schemas/attendance.schema';
 
 @Injectable()
 export class StudentService {
     constructor(
+        @InjectModel(Attendance.name)
+        private AttendanceModel : mongoose.Model<Attendance>,
         @InjectModel(Student.name)
         private StudentModel : mongoose.Model<Student>,
-        private jwtService : JwtService
     ) {}
-
 
     async findAll() : Promise<Student[]>{
         const students = await this.StudentModel.find({})
-        return students;
+        const publicStudent = new UserMiddleware()
+        const secureStudents = students.map(student => publicStudent.getPublicProfile(student))
+        return secureStudents;
     }
-
 
     async findById(id: string) : Promise<Student>{
       const student = await this.StudentModel.findById(id)
+      const publicStudent = new UserMiddleware()
+      publicStudent.getPublicProfile(student)
       return student;
     }
-
 
     async createOne(studentData : Student) : Promise<Student> {
       const newStudent = new this.StudentModel(studentData)
@@ -33,13 +35,8 @@ export class StudentService {
       }
       
       try {
-        const payload = {
-          id : newStudent._id 
-        }
-        const token = await jwt.sign(payload, "thisIsSecretJWTWebToken")
-        console.log(token)
-        newStudent.tokens.push({ token : token})
-        await newStudent.save()
+        const tokenGenerator = new UserMiddleware()
+        tokenGenerator.generateAuthToken(newStudent)
         return newStudent
       } catch(e){
         console.log(e)
@@ -57,11 +54,27 @@ export class StudentService {
       if(!updatedStudent){
         throw new NotFoundException('Given student not found')
       }
+      const publicStudent = new UserMiddleware()
+      publicStudent.getPublicProfile(updatedStudent)
       return updatedStudent
     }
-
     
     async deleteOne(id : string) {
-      await this.StudentModel.findByIdAndDelete(id)
+      const student = await this.StudentModel.findByIdAndDelete(id)
+      await this.AttendanceModel.deleteMany({ userId : student._id})
+    }
+
+    async loginStudent(credentials ) : Promise<Student>{
+      const email = credentials.email
+      const password = credentials.password
+      const student :any = await this.StudentModel.findOne({ email : email });
+      if (!student) {
+          return null;
+      }
+      const publicStudent = new UserMiddleware()
+      await publicStudent.findByCredentials(password,student.password)
+      if(publicStudent.findByCredentials(password,student.password)){
+        return student
+      }
     }
 }
