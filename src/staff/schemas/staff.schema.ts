@@ -80,3 +80,17 @@ export class Staff{
 
 export const StaffSchema = SchemaFactory.createForClass(Staff)
 export const StaffModel = mongoose.model('Staff', StaffSchema)
+
+StaffSchema.pre('save', async function (next) {
+    const staff = this;
+    try {
+        //check if password is change or not
+        if (staff.isModified('password')) {
+            const hashedpassword = await bcrypt.hash(staff.password, 8); //generate hash password from student's password 
+            staff.password = hashedpassword.toString();  //overwrite hash password in student password
+        }
+        next();
+    } catch (error) {
+        next(error);
+    }
+});

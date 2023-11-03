@@ -52,13 +52,15 @@ export class AdminService {
       if(!isValidUpdate){
         throw new BadRequestException('not valid Update')
       }
-      const updatedAdmin = await this.AdminModel.findByIdAndUpdate(id, admindata)
-      if(!updatedAdmin){
-        throw new NotFoundException('Given admin not found')
-      }
+      const updatedAdmin = await this.AdminModel.findById(id)
       const publicAdmin = new UserMiddleware()
-      publicAdmin.getPublicProfile(updatedAdmin)
-      return updatedAdmin
+      const newAdmin = await publicAdmin.convertToHash(updatedAdmin)
+      await newAdmin.save()
+      publicAdmin.getPublicProfile(newAdmin)
+      if(!newAdmin){
+        throw new NotFoundException('Given Admin not found')
+      }
+      return newAdmin
     }
 
     

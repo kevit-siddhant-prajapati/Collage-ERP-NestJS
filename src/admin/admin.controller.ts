@@ -8,7 +8,7 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 export class AdminController {
     constructor(private adminService : AdminService){}
 
-    @Get()
+    @Get('all')
     async getAllAdmins() : Promise<Admin[]> {
         return this.adminService.findAll()
     }

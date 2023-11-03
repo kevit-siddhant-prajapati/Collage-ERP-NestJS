@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, HttpCode, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, HttpCode, Param, UseInterceptors } from '@nestjs/common';
 import { StaffService } from './staff.service';
 import { Staff } from './schemas/staff.schema';
 import { CreateStaffDto } from './dto/crete-staff.dto';
@@ -9,7 +9,7 @@ import { UpdateStaffDto } from './dto/update-staff.dto';
 export class StaffController {
     constructor(private staffService : StaffService){}
 
-    @Get()
+    @Get('all')
     async getAllStaffs() : Promise<Staff[]> {
         return this.staffService.findAll()
     }
@@ -20,16 +20,19 @@ export class StaffController {
         return this.staffService.findById(id)
     }
 
+    
     @Post('new')
     async addStaff(@Body() input: CreateStaffDto) : Promise<Staff> {
         return this.staffService.createOne(input)
     }
 
+    //@UseInterceptors(EncryptPasswordIntercepter)
     @Patch('/update/:id')
     async updateStaff(
         @Body() staff: UpdateStaffDto,
         @Param('id') id: string
         ) : Promise<Staff> {
+            //console.log(EncryptPasswordIntercepter)
         return this.staffService.updateOne(id, staff)
     }
 

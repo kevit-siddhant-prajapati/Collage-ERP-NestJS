@@ -1,6 +1,7 @@
 
-import { UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from "bcrypt"
+import { error } from "console";
 import * as jwt from "jsonwebtoken"
 
 export class UserMiddleware{
@@ -15,8 +16,8 @@ export class UserMiddleware{
         return user
     }
 
-    async findByCredentials( password : string, studentPassword){
-        const isMatch = await bcrypt.compare(password, studentPassword);
+    async findByCredentials( password : string, userPassword){
+        const isMatch = await bcrypt.compare(password, userPassword);
         if (!isMatch) {
             throw new UnauthorizedException("Password is incorrect")
         } else {
@@ -27,7 +28,16 @@ export class UserMiddleware{
     async generateAuthToken(user){
         const token = jwt.sign({_id : user._id.toString()}, process.env.JWT_SECRET_CODE, {expiresIn : '1h'})
         user.tokens = user.tokens.concat({token})
-        await user.save()
+        const saveData = await user.save()
+        if(!saveData){
+            throw new Error('User already exist!')
+        }
         return token
+    }
+
+    async convertToHash(user){
+        const newPassword:any = await bcrypt.hash(user.password, 8); //generate hash password from student's password 
+        user.password = newPassword;
+        return user
     }
 }

@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AttendanceService } from './attendance.service';
 import { AttendanceController } from './attendance.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AttendanceSchema } from './schemas/attendance.schema';
 import { StudentSchema } from 'src/student/schemas/student.schema';
 import { StaffSchema } from 'src/staff/schemas/staff.schema';
+import { AdminAuthMiddleware } from 'src/auth/auth.middleware';
+import { AdminSchema } from 'src/admin/schemas/admin.schema';
 
 
 @Module({
@@ -12,9 +14,9 @@ import { StaffSchema } from 'src/staff/schemas/staff.schema';
     MongooseModule.forFeature([
       { name: 'Attendance', schema : AttendanceSchema},
       { name: 'Staff', schema : StaffSchema},
-      { name: 'Student', schema : StudentSchema}
+      { name: 'Student', schema : StudentSchema},
+      { name: 'Admin', schema : AdminSchema }
     ]),
-      
     // StudentModule,
     // StaffModule,
 ],
@@ -22,4 +24,15 @@ import { StaffSchema } from 'src/staff/schemas/staff.schema';
   controllers: [AttendanceController],
   exports : [AttendanceService]
 })
-export class AttendanceModule {}
+export class AttendanceModule {
+  configure(consumer : MiddlewareConsumer){
+    consumer
+    .apply(AdminAuthMiddleware)
+    .forRoutes(
+      {path : 'staffs' , method : RequestMethod.GET},
+      {path : 'staffs/new' , method : RequestMethod.POST},
+      {path : 'staffs/update' , method : RequestMethod.PATCH},
+      {path : 'staffs/delete' , method : RequestMethod.DELETE}
+    )
+  }
+}

@@ -50,13 +50,15 @@ export class StudentService {
       if(!isValidUpdate){
         throw new BadRequestException('not valid Update')
       }
-      const updatedStudent = await this.StudentModel.findByIdAndUpdate(id, studentdata)
-      if(!updatedStudent){
+      const updatedStudent = await this.StudentModel.findById(id)
+      const publicStudent = new UserMiddleware()
+      const newStudent = await publicStudent.convertToHash(updatedStudent)
+      await newStudent.save()
+      publicStudent.getPublicProfile(newStudent)
+      if(!newStudent){
         throw new NotFoundException('Given student not found')
       }
-      const publicStudent = new UserMiddleware()
-      publicStudent.getPublicProfile(updatedStudent)
-      return updatedStudent
+      return newStudent
     }
     
     async deleteOne(id : string) {
@@ -64,17 +66,4 @@ export class StudentService {
       await this.AttendanceModel.deleteMany({ userId : student._id})
     }
 
-    async loginStudent(credentials ) : Promise<Student>{
-      const email = credentials.email
-      const password = credentials.password
-      const student :any = await this.StudentModel.findOne({ email : email });
-      if (!student) {
-          return null;
-      }
-      const publicStudent = new UserMiddleware()
-      await publicStudent.findByCredentials(password,student.password)
-      if(publicStudent.findByCredentials(password,student.password)){
-        return student
-      }
-    }
 }

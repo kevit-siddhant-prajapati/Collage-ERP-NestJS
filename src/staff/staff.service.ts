@@ -51,13 +51,16 @@ export class StaffService {
       if(!isValidUpdate){
         throw new BadRequestException('not valid Update')
       }
-      const updatedStaff = await this.StaffModel.findByIdAndUpdate(id, studentdata)
-      if(!updatedStaff){
+      const updatedStaff = await this.StaffModel.findById(id)
+      const publicStaff = new UserMiddleware()
+      const newStaff = await publicStaff.convertToHash(updatedStaff)
+      console.log(newStaff)
+      await newStaff.save()
+      publicStaff.getPublicProfile(updatedStaff)
+      if(!newStaff){
         throw new NotFoundException('Given staff not found')
       }
-      const publicStudent = new UserMiddleware()
-      publicStudent.getPublicProfile(updatedStaff)
-      return updatedStaff
+      return newStaff
     }
     
     async deleteOne(id : string) {
