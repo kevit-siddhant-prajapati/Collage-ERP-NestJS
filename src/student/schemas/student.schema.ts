@@ -91,7 +91,6 @@ export class Student{
     
     @Prop({
         type: [{ token: { type: String, required: true } }],
-        required: true,
       })
       tokens: Array<{ token: string }>;
 
@@ -102,16 +101,16 @@ export class Student{
 export const StudentSchema = SchemaFactory.createForClass(Student)
 export const StudentModel = mongoose.model('Student', StudentSchema)
 
-StudentSchema.pre('save', async function (next) {
-    const student = this;
-    try {
-        //check if password is change or not
-        if (student.isModified('password')) {
-            const hashedpassword = await bcrypt.hash(student.password, 8); //generate hash password from student's password 
-            student.password = hashedpassword.toString();  //overwrite hash password in student password
-        }
-        next();
-    } catch (error) {
-        next(error);
-    }
-});
+// StudentSchema.pre('save', async function (next) {
+//     const student = this;
+//     try {
+//         //check if password is change or not
+//         if (student.isModified('password')) {
+//             const hashedpassword = await bcrypt.hash(student.password, 8); //generate hash password from student's password 
+//             student.password = hashedpassword.toString();  //overwrite hash password in student password
+//         }
+//         next();
+//     } catch (error) {
+//         next(error);
+//     }
+// });

@@ -16,10 +16,10 @@ export class AdminModule {
     consumer
     .apply(AdminAuthMiddleware)
     .forRoutes(
-      {path : 'admin' , method : RequestMethod.GET},
+      {path : 'admin/:id' , method : RequestMethod.GET},
       {path : 'admin/new' , method : RequestMethod.POST},
-      {path : 'admin/update' , method : RequestMethod.PATCH},
-      {path : 'admin/delete' , method : RequestMethod.DELETE},
+      {path : 'admin/update/:id' , method : RequestMethod.PATCH},
+      {path : 'admin/delete/:id' , method : RequestMethod.DELETE},
       {path : 'admin/all' , method : RequestMethod.GET}
     )
   }

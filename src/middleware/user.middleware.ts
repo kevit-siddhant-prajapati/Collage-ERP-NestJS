@@ -3,10 +3,13 @@ import { BadRequestException, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from "bcrypt"
 import { error } from "console";
 import * as jwt from "jsonwebtoken"
+import { Admin } from "src/admin/schemas/admin.schema";
+import { Staff } from "src/staff/schemas/staff.schema";
+import { Student } from "src/student/schemas/student.schema";
 
 export class UserMiddleware{
 
-    getPublicProfile(user){
+    getPublicProfile(user : any){
         let newUser = ({...user}._doc)
         delete newUser["password"]
         delete newUser["tokens"]
@@ -38,6 +41,8 @@ export class UserMiddleware{
     async convertToHash(user){
         const newPassword:any = await bcrypt.hash(user.password, 8); //generate hash password from student's password 
         user.password = newPassword;
+        console.log('User is given below')
+        console.log(user)
         return user
     }
 }

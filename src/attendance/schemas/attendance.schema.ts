@@ -1,7 +1,5 @@
 import { Prop, SchemaFactory, Schema } from "@nestjs/mongoose";
 import mongoose, { Mongoose } from "mongoose";
-import { AdminSchema } from "src/admin/schemas/admin.schema";
-import * as bcrypt from "bcrypt"
 
 @Schema()
 export class Attendance{
@@ -36,17 +34,3 @@ export class Attendance{
 
 export const AttendanceSchema = SchemaFactory.createForClass(Attendance)
 export const AttendanceModel = mongoose.model("Attendance", AttendanceSchema)
-
-AdminSchema.pre('save', async function (next) {
-    const admin = this;
-    try {
-        //check if password is change or not
-        if (admin.isModified('password')) {
-            const hashedpassword = await bcrypt.hash(admin.password, 8); //generate hash password from student's password 
-            admin.password = hashedpassword.toString();  //overwrite hash password in student password
-        }
-        next();
-    } catch (error) {
-        next(error);
-    }
-});

@@ -1,15 +1,16 @@
-import { BadRequestException, Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, Post, Req, Res } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { AuthService } from './auth.service';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
     constructor(private authService : AuthService){}
 
     @Post('login')
+    @HttpCode(200)
     async loginUser(
-        @Body() credencials :LoginUserDto
+        @Body() credencials :LoginUserDto,
     ) {
         if(credencials.role == "Student"){
             return this.authService.loginStudent(credencials)

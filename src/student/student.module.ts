@@ -33,10 +33,10 @@ export class StudentModule {
         consumer
             .apply(StaffAuthMiddleware)
             .forRoutes(
-                { path: 'students/update', method : RequestMethod.PATCH},
-                { path: 'students/delete', method : RequestMethod.DELETE},
+                { path: 'students/update/:id', method : RequestMethod.PATCH},
+                { path: 'students/delete/:id', method : RequestMethod.DELETE},
                 { path: 'students/new', method : RequestMethod.POST},
-                { path: 'students', method: RequestMethod.GET},
+                { path: 'students/:id', method: RequestMethod.GET},
             )
     }
 }

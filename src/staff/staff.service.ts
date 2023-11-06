@@ -30,8 +30,10 @@ export class StaffService {
     }
 
 
-    async createOne(studentData : Staff) : Promise<Staff> {
-      const newStaff = new this.StaffModel(studentData)
+    async createOne(staffData : Staff) : Promise<Staff> {
+      const publicStaff = new UserMiddleware()
+      const hashedpasswordStaff = await publicStaff.convertToHash(staffData)
+      const newStaff = new this.StaffModel(hashedpasswordStaff)
       if(!newStaff){
         throw new BadRequestException('Enter valid Staffdata ')
       }
@@ -44,23 +46,25 @@ export class StaffService {
       }
     } 
 
-    async updateOne(id : string, studentdata: Staff) : Promise<Staff> {
+    async updateOne(id : string, staffdata) : Promise<Staff> {
+      console.log(`updateable staff is call:`)
       const updatable = ['name', 'email', 'password', 'phoneNumber', 'attendance', 'department']
-      const updateStaff = Object.keys(studentdata)
+      const updateStaff = Object.keys(staffdata)
       const isValidUpdate = updateStaff.every(update => updatable.includes(update))
       if(!isValidUpdate){
         throw new BadRequestException('not valid Update')
       }
-      const updatedStaff = await this.StaffModel.findById(id)
       const publicStaff = new UserMiddleware()
-      const newStaff = await publicStaff.convertToHash(updatedStaff)
-      console.log(newStaff)
-      await newStaff.save()
+      if(staffdata.hasOwnProperty('password')){
+        staffdata = await publicStaff.convertToHash(staffdata)
+        console.log(staffdata)
+      }
+      const updatedStaff = await this.StaffModel.findByIdAndUpdate(id, staffdata)
       publicStaff.getPublicProfile(updatedStaff)
-      if(!newStaff){
+      if(!updatedStaff){
         throw new NotFoundException('Given staff not found')
       }
-      return newStaff
+      return updatedStaff
     }
     
     async deleteOne(id : string) {

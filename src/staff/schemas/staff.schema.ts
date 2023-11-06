@@ -3,6 +3,7 @@ import validator from "validator";
 import * as jwt from "jsonwebtoken"
 import * as bcrypt from "bcrypt"
 import mongoose from "mongoose";
+import { IsOptional } from "class-validator";
 
 @Schema({
     timestamps :true
@@ -74,23 +75,10 @@ export class Staff{
         type: [{ token: { type: String, required: true } }],
         required: true,
       })
-      tokens: Array<{ token: string }>;
+
+    tokens: Array<{ token: string }>;
 
 }
 
 export const StaffSchema = SchemaFactory.createForClass(Staff)
 export const StaffModel = mongoose.model('Staff', StaffSchema)
-
-StaffSchema.pre('save', async function (next) {
-    const staff = this;
-    try {
-        //check if password is change or not
-        if (staff.isModified('password')) {
-            const hashedpassword = await bcrypt.hash(staff.password, 8); //generate hash password from student's password 
-            staff.password = hashedpassword.toString();  //overwrite hash password in student password
-        }
-        next();
-    } catch (error) {
-        next(error);
-    }
-});

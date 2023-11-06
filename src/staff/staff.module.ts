@@ -31,10 +31,10 @@ export class StaffModule {
     consumer
     .apply(AdminAuthMiddleware)
     .forRoutes(
-      {path : 'staffs' , method : RequestMethod.GET},
+      {path : 'staffs/:id' , method : RequestMethod.GET},
       {path : 'staffs/new' , method : RequestMethod.POST},
-      {path : 'staffs/update' , method : RequestMethod.PATCH},
-      {path : 'staffs/delete' , method : RequestMethod.DELETE}
+      {path : 'staffs/update/:id' , method : RequestMethod.PATCH},
+      {path : 'staffs/delete/:id' , method : RequestMethod.DELETE}
     )
   }
 }

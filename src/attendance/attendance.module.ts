@@ -29,10 +29,9 @@ export class AttendanceModule {
     consumer
     .apply(AdminAuthMiddleware)
     .forRoutes(
-      {path : 'staffs' , method : RequestMethod.GET},
-      {path : 'staffs/new' , method : RequestMethod.POST},
-      {path : 'staffs/update' , method : RequestMethod.PATCH},
-      {path : 'staffs/delete' , method : RequestMethod.DELETE}
+      {path : 'attendance/get' , method : RequestMethod.GET},
+      {path : 'attendance/fill' , method : RequestMethod.POST},
+      {path : 'attendance/update/:id' , method : RequestMethod.PATCH},
     )
   }
 }

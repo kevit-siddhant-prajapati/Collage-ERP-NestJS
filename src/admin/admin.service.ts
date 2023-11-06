@@ -31,7 +31,9 @@ export class AdminService {
 
 
     async createOne(adminData : Admin) : Promise<Admin> {
-      const newAdmin = new this.AdminModel(adminData)
+      const publicAdmin = new UserMiddleware()
+      const hashedpasswordAdmin = await publicAdmin.convertToHash(adminData)
+      const newAdmin = new this.AdminModel(hashedpasswordAdmin)
       if(!newAdmin){
         throw new BadRequestException('Enter valid Staffdata ')
       }
@@ -52,15 +54,17 @@ export class AdminService {
       if(!isValidUpdate){
         throw new BadRequestException('not valid Update')
       }
-      const updatedAdmin = await this.AdminModel.findById(id)
       const publicAdmin = new UserMiddleware()
-      const newAdmin = await publicAdmin.convertToHash(updatedAdmin)
-      await newAdmin.save()
-      publicAdmin.getPublicProfile(newAdmin)
-      if(!newAdmin){
+      if(admindata.hasOwnProperty('password')){
+        admindata = await publicAdmin.convertToHash(admindata)
+        console.log(admindata)
+      }
+      const updatedAdmin = await this.AdminModel.findByIdAndUpdate(id, admindata)
+      publicAdmin.getPublicProfile(updatedAdmin)
+      if(!updatedAdmin){
         throw new NotFoundException('Given Admin not found')
       }
-      return newAdmin
+      return updatedAdmin
     }
 
     
