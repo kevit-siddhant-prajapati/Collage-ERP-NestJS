@@ -3,6 +3,12 @@ import validator from "validator";
 import * as bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
+/**
+ * @description : Student schema give property for generate new student
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @export
+ * @class Student
+ */
 @Schema({
     timestamps :true
 })
@@ -92,25 +98,10 @@ export class Student{
     @Prop({
         type: [{ token: { type: String, required: true } }],
       })
-      tokens: Array<{ token: string }>;
-
-
+      tokens: Array<{ token: string }>
 }
 
 
 export const StudentSchema = SchemaFactory.createForClass(Student)
 export const StudentModel = mongoose.model('Student', StudentSchema)
 
-// StudentSchema.pre('save', async function (next) {
-//     const student = this;
-//     try {
-//         //check if password is change or not
-//         if (student.isModified('password')) {
-//             const hashedpassword = await bcrypt.hash(student.password, 8); //generate hash password from student's password 
-//             student.password = hashedpassword.toString();  //overwrite hash password in student password
-//         }
-//         next();
-//     } catch (error) {
-//         next(error);
-//     }
-// });

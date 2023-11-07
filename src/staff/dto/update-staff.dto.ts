@@ -1,7 +1,12 @@
 import { IsString, IsInt, IsIn, IsOptional, IsEnum } from 'class-validator';
-import { IsStringOrUndefined } from '../../student/IsStringOrUndefined.pipe';
+import { IsStringOrUndefined } from '../../student/pipe/IsStringOrUndefined.pipe';
 
-
+/**
+ * @description : this dto number of that can be change when update staff
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @export
+ * @class UpdateStaffDto
+ */
 export class UpdateStaffDto {
 
     @IsOptional()

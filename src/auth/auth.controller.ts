@@ -7,7 +7,13 @@ import { Request, Response } from 'express';
 export class AuthController {
     constructor(private authService : AuthService){}
 
-    @Post('login')
+/**
+ * @description : this route use for login user
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @param {LoginUserDto} credencials
+ * @returns {*} : res back to postman
+ */
+@Post('login')
     @HttpCode(200)
     async loginUser(
         @Body() credencials :LoginUserDto,
@@ -23,6 +29,11 @@ export class AuthController {
         }
     }
 
+    /**
+     * @description : logout all existing user
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @returns {*} 
+     */
     @Get('logout')
     async logoutUser(){
         return this.authService.logout()

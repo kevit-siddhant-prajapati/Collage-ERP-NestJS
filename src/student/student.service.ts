@@ -14,6 +14,11 @@ export class StudentService {
         private StudentModel : mongoose.Model<Student>,
     ) {}
 
+    /**
+     * @description : get data of all student
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @returns {*}  {Promise<Student[]>}
+     */
     async findAll() : Promise<Student[]>{
         const students = await this.StudentModel.find({})
         const publicStudent = new UserMiddleware()
@@ -21,6 +26,12 @@ export class StudentService {
         return secureStudents;
     }
 
+    /**
+     * @description : get data of student using its id
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {string} id
+     * @returns {*}  {Promise<Student>}
+     */
     async findById(id: string) : Promise<Student>{
       const student = await this.StudentModel.findById(id)
       const publicStudent = new UserMiddleware()
@@ -28,6 +39,12 @@ export class StudentService {
       return student;
     }
 
+    /**
+     * @description : create new student
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {Student} studentData
+     * @returns {*}  {Promise<Student>}
+     */
     async createOne(studentData : Student) : Promise<Student> {
       const publicStudent = new UserMiddleware()
       const hashedpasswordStudent = await publicStudent.convertToHash(studentData)
@@ -52,7 +69,7 @@ export class StudentService {
  * @param {Student} studentdata : updateable data
  * @returns {*}  {Promise<Student>} return value shold be Student type
  */
-async updateOne(id : string, studentdata: Student) : Promise<Student> {
+    async updateOne(id : string, studentdata: Student) : Promise<Student> {
       const updatable = ['name', 'email', 'currentSem', 'password', 'phoneNumber', 'batch', 'attendance', 'department']
       const updateStudent = Object.keys(studentdata)
       const isValidUpdate = updateStudent.every(update => updatable.includes(update))
@@ -72,6 +89,11 @@ async updateOne(id : string, studentdata: Student) : Promise<Student> {
       return updatedStudent
     }
     
+    /**
+     * @description : delete student using its id
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {string} id
+     */
     async deleteOne(id : string) {
       const student = await this.StudentModel.findByIdAndDelete(id)
       await this.AttendanceModel.deleteMany({ userId : student._id})

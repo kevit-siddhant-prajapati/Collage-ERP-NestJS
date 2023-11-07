@@ -16,7 +16,12 @@ export class AttendanceService {
         @InjectModel(Staff.name) private readonly StaffModel : Model<Student>,
         @InjectModel(Attendance.name) private readonly AttendanceModel : Model<Attendance>
     ){}
-
+    /**
+     * @description : fill attendance of staff as well student using its id
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {fillAttendanceDto} attendanceData
+     * @returns {*} 
+     */
     async fillStudentAttendance(attendanceData :fillAttendanceDto) {
         const attendStudent = attendanceData.attendance;
         for (const attendie of attendStudent) {
@@ -31,11 +36,9 @@ export class AttendanceService {
                 }
                 const newAttendance = await this.AttendanceModel.create(attendanceDetail)
                 if(!newAttendance){
-                    //return res.status(400).send(`Unable to fill student attendance ${err}`)
                     throw new BadRequestException(`Unable to fill student attendance`)
                 }
                 await student.save();
-                //studentsLogger.info(`Attendance filled : ${student._id}`)
             } 
             const notAttendStudent = await this.StudentModel.findById({ $ne :attendie});
             if(notAttendStudent){
@@ -47,17 +50,21 @@ export class AttendanceService {
                 }
                 const newAttendance = await this.AttendanceModel.create(attendanceDetail)
                 if(!newAttendance){
-                    //return res.status(400).send(`Unable to fill student attendance ${err}`)
                     throw new BadRequestException(`Unable to fill student attendance`)
                 }
                 await student.save();
-                //studentsLogger.info(`Attendance filled : ${notAttendStudent._id}`)
             }
         }
         return "attendance of Student Filled Successfully"
     }
 
 
+    /**
+     * @description : fill attendance of staff using its id
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {fillAttendanceDto} attendanceData
+     * @returns {*} 
+     */
     async fillStaffAttendance(attendanceData :fillAttendanceDto) {
         const attendStaff = attendanceData.attendance;
         for (const attendie of attendStaff) {
@@ -74,11 +81,9 @@ export class AttendanceService {
                 try {
                     await newAttendance.save()
                 } catch (err){
-                    //return res.status(400).send(`Unable to fill student attendance ${err}`)
                     throw new BadRequestException(`Unable to fill staff attendance ${err}`)
                 }
                 await staff.save();
-                //studentsLogger.info(`Attendance filled : ${student._id}`)
             } 
             const notAttendStaff = await this.StaffModel.findById({ $ne :attendie});
             if(notAttendStaff){
@@ -92,17 +97,22 @@ export class AttendanceService {
                 try {
                     await newAttendance.save()
                 } catch (err){
-                    //return res.status(400).send(`Unable to fill student attendance ${err}`)
                     throw new BadRequestException(`Unable to fill staff attendance ${err}`)
                 }
                 await staff.save();
-                //studentsLogger.info(`Attendance filled : ${notAttendStudent._id}`)
             }
         }
         return "attendance of Staff Filled Successfully"
     }
 
 
+    /**
+     * @description : get attendace of user using its roll ans edit it
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {Attendance} attendanceData
+     * @param {string} id
+     * @returns {*}  {Promise<Attendance>}
+     */
     async manageAttendanceById(attendanceData : Attendance, id : string): Promise<Attendance>{
         const updatable = [  'status', 'date']
         const updateAttend = Object.keys(attendanceData)
@@ -117,6 +127,12 @@ export class AttendanceService {
         return updateAttendance
     }
 
+    /**
+     * @description : get Attendance of user using its role
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {Attendance} role
+     * @returns {*}  {Promise<Attendance[]>}
+     */
     async getAttendanceByRole(role : Attendance): Promise<Attendance[]>{
         const attendances = await this.AttendanceModel.find(role)
         if(!attendances){

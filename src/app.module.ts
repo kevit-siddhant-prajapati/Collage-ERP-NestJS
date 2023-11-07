@@ -9,7 +9,12 @@ import { AdminModule } from './admin/admin.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { AuthModule } from './auth/auth.module';
 import { AnalysisModule } from './analysis/analysis.module';
-
+/**
+ * @description : this module all module of project
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @export
+ * @class AppModule
+ */
 @Module({
   imports: [
     ConfigModule.forRoot({

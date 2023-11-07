@@ -8,7 +8,12 @@ import { StaffSchema } from 'src/staff/schemas/staff.schema';
 import { AdminAuthMiddleware } from 'src/auth/auth.middleware';
 import { AdminSchema } from 'src/admin/schemas/admin.schema';
 
-
+/**
+ * @description : this model import model of all type of user 
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @export
+ * @class AttendanceModule
+ */
 @Module({
   imports : [
     MongooseModule.forFeature([
@@ -17,14 +22,19 @@ import { AdminSchema } from 'src/admin/schemas/admin.schema';
       { name: 'Student', schema : StudentSchema},
       { name: 'Admin', schema : AdminSchema }
     ]),
-    // StudentModule,
-    // StaffModule,
 ],
   providers: [AttendanceService],
   controllers: [AttendanceController],
   exports : [AttendanceService]
 })
+
+
 export class AttendanceModule {
+  /**
+   * @description : below given method set AdminAuthmiddleware with routes
+   * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+   * @param {MiddlewareConsumer} consumer
+   */
   configure(consumer : MiddlewareConsumer){
     consumer
     .apply(AdminAuthMiddleware)

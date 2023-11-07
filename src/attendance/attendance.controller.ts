@@ -12,6 +12,12 @@ export class AttendanceController {
         private attendanceService : AttendanceService
     ){}
 
+    /**
+     * @description : this method fill attendance of user
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {fillAttendanceDto} attendance
+     * @returns {*} 
+     */
     @Post('fill')
     async fillAttendenceOfUser(
         @Body() attendance : fillAttendanceDto
@@ -25,6 +31,13 @@ export class AttendanceController {
         }
     }
 
+    /**
+     * @description : this route update attendance of user using id
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {string} id
+     * @param {ManageAttendanceDto} attendance
+     * @returns {*} 
+     */
     @Patch('update/:id')
     async updateUserAttendance(
         @Param('id') id: string,
@@ -33,6 +46,12 @@ export class AttendanceController {
         return this.attendanceService.manageAttendanceById(attendance, id)
     }
 
+    /**
+     * @description : this method give attendance by its role
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {CreateAttendanceDto} roleOfUser
+     * @returns {*} 
+     */
     @Get('get')
     async getUserByRole(
         @Body() roleOfUser: CreateAttendanceDto

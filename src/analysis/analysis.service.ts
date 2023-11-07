@@ -3,6 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Attendance } from 'src/attendance/schemas/attendance.schema';
 import { Student } from 'src/student/schemas/student.schema';
+import { Analysis1Dto } from './dto/analysis1.dto';
+import { Analysis2Dto } from './dto/analysis2.dto';
+import { Analysis3Dto } from './dto/analysis3.dto';
+import { Analysis4Dto } from './dto/analysis4.dto';
 
 @Injectable()
 export class AnalysisService {
@@ -13,7 +17,12 @@ export class AnalysisService {
         private AttendanceModel : mongoose.Model<Attendance>
     ){}
 
-    async analysis1(){
+    /**
+     * @description : it will provide data as given is analysis1
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @returns {*} 
+     */
+    async analysis1() : Promise<Analysis1Dto[]>{
         try {
             const student = await this.StudentModel.aggregate([
                 // this pipe group the data according to batch the after year
@@ -65,7 +74,13 @@ export class AnalysisService {
        }
 
 
-       async analysis2(inputData){
+       /**
+        * @description : give data according to analysis2
+        * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+        * @param {*} inputData
+        * @returns {*} 
+        */
+       async analysis2(inputData) : Promise<Analysis2Dto[]>{
         const date = inputData.date
         const newDate = new Date(date)
         //console.log(newDate)
@@ -93,7 +108,13 @@ export class AnalysisService {
        }
 
 
-       async analysis3(inputData){
+       /**
+        * @description : get request from postman give analysis3
+        * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+        * @param {*} inputData
+        * @returns {*} 
+        */
+       async analysis3(inputData) : Promise<Analysis3Dto[]>{
         try {
             const specificDate = new Date(inputData.date); // Replace 'YYYY-MM-DD' with your specific date
             const batchSize = inputData.batch || 2020; // Replace with the desired batch year
@@ -191,8 +212,13 @@ export class AnalysisService {
         }
        }
 
-
-       async analysis4(inputData){
+      /**
+       * @description : give the data according to analysis 4
+       * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+       * @param {*} inputData
+       * @returns {*} 
+       */
+      async analysis4(inputData) : Promise<Analysis4Dto[]>{
         try {
             const result = await this.AttendanceModel.aggregate([
                 /**

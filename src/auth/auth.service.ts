@@ -15,8 +15,13 @@ export class AuthService {
         @InjectModel(Staff.name) private readonly StaffModel : Model<Staff>,
         @InjectModel(Admin.name) private readonly AdminModel : Model<Admin>
     ){}
-
-    async loginStudent(credentials ) : Promise<Student>{
+/**
+ * @description : give authorization to student
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @param {*} credentials
+ * @returns {*}  {Promise<Student>}
+ */
+async loginStudent(credentials ) : Promise<Student>{
         const email = credentials.email
         const password = credentials.password
         const student :any = await this.StudentModel.findOne({ email : email });
@@ -33,36 +38,44 @@ export class AuthService {
         }
       }
 
+      /**
+       * @description : give authorization to staff
+       * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+       * @param {*} credentials
+       * @returns {*}  {Promise<Staff>}
+       */
       async loginStaff(credentials ) : Promise<Staff>{
         console.log('login Staff is selected')
         const email = credentials.email
         const password = credentials.password
-        console.log(`email is: ${email}
-        password: ${password}`)
+        // console.log(`email is: ${email}
+        // password: ${password}`)
         const staff :any = await this.StaffModel.findOne({ email : email });
         if (!staff) {
             return null;
         }
-        console.log(staff)
+        //console.log(staff)
         const publicStaff = new UserMiddleware()
-        console.log(`Given password: ${password}
-        actual password: ${staff.password}`)
+        // console.log(`Given password: ${password}
+        // actual password: ${staff.password}`)
         await publicStaff.findByCredentials(password, staff.password)
 
         const token = await publicStaff.generateAuthToken(staff)
-        console.log(token)
+        //console.log(token)
         if(publicStaff.findByCredentials(password,staff.password)){
           return staff
         }
       }
-
+/**
+ * @description : give authorization to admin
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @param {*} credentials
+ * @returns {*}  {Promise<Staff>}
+ */
       async loginAdmin(credentials ) : Promise<Staff>{
         const email = credentials.email
         const password = credentials.password
-        //console.log(`email is: ${email}
-        //password: ${password}`)
         const admin :any = await this.AdminModel.findOne({ email : email });
-        //console.log(`admin is : ${admin}`)
         if (!admin) {
             return null;
         }
@@ -70,7 +83,7 @@ export class AuthService {
         await publicAdmin.findByCredentials(password, admin.password)
 
         const token = await publicAdmin.generateAuthToken(admin)
-        console.log(token)
+        //console.log(token)
         if(publicAdmin.findByCredentials(password, admin.password)){
           return admin
         }
@@ -83,7 +96,3 @@ export class AuthService {
         await this.StaffModel.updateMany({}, { $set: { tokens: [] } })
       }
 }
-
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTMzNjNhYzkxNDQyNjc4NTBhNzliNDgiLCJpYXQiOjE2OTkyNTM1NDAsImV4cCI6MTY5OTI1NzE0MH0.g_k2bp-pFpG9NwsliQvEhYro2l4XtSBZsjFciqYFQco
-
-//

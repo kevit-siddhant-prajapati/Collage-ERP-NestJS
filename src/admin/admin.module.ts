@@ -5,13 +5,24 @@ import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AdminSchema } from './schemas/admin.schema';
 import { AdminAuthMiddleware } from 'src/auth/auth.middleware';
-
+/**
+ * @description : import AdminSchema and connect controller and service
+ * @author Siddhant Prajapati
+ * @export
+ * @class AdminModule
+ */
 @Module({
   imports : [MongooseModule.forFeature([{ name: 'Admin', schema : AdminSchema}])],
   providers: [AdminService, JwtService],
   controllers: [AdminController]
 })
+
 export class AdminModule {
+  /**
+   * @description : set AdminAuthMiddleware for following given routes
+   * @author Siddhant Prajapati
+   * @param {MiddlewareConsumer} consumer
+   */
   configure(consumer : MiddlewareConsumer){
     consumer
     .apply(AdminAuthMiddleware)

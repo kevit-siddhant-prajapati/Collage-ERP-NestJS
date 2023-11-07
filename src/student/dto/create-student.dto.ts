@@ -1,7 +1,12 @@
 import { IsString, IsInt, IsIn, IsOptional, IsEnum } from 'class-validator';
-import { IsStringOrUndefined } from '../IsStringOrUndefined.pipe';
+import { IsStringOrUndefined } from '../pipe/IsStringOrUndefined.pipe';
 
-
+/**
+ * @description : this dto give information as well restrict student when it is created
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @export
+ * @class CreateStudentDto
+ */
 export class CreateStudentDto {
 
     @IsOptional()

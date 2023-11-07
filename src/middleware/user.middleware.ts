@@ -8,7 +8,12 @@ import { Staff } from "src/staff/schemas/staff.schema";
 import { Student } from "src/student/schemas/student.schema";
 
 export class UserMiddleware{
-
+/**
+ * @description : remove unwanted field from document
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @param {*} user
+ * @returns {*} 
+ */
     getPublicProfile(user : any){
         let newUser = ({...user}._doc)
         delete newUser["password"]
@@ -18,7 +23,13 @@ export class UserMiddleware{
         delete newUser["__v"]
         return user
     }
-
+/**
+ * @description : use for authenticate  user using email and password
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @param {string} password
+ * @param {*} userPassword
+ * @returns {*} 
+ */
     async findByCredentials( password : string, userPassword){
         const isMatch = await bcrypt.compare(password, userPassword);
         if (!isMatch) {
@@ -27,7 +38,12 @@ export class UserMiddleware{
             return true;
         }
     }
-
+/**
+ * @description : this function generate authentication token
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @param {*} user
+ * @returns {*} 
+ */
     async generateAuthToken(user){
         const token = jwt.sign({_id : user._id.toString()}, process.env.JWT_SECRET_CODE, {expiresIn : '1h'})
         user.tokens = user.tokens.concat({token})
@@ -38,6 +54,12 @@ export class UserMiddleware{
         return token
     }
 
+    /**
+     * @description : convert password of user to hashcode
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {*} user
+     * @returns {*} 
+     */
     async convertToHash(user){
         const newPassword:any = await bcrypt.hash(user.password, 8); //generate hash password from student's password 
         user.password = newPassword;

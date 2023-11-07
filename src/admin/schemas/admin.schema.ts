@@ -1,9 +1,12 @@
 import { Schema, Prop, SchemaFactory, raw } from "@nestjs/mongoose";
 import validator from "validator";
-import * as jwt from "jsonwebtoken"
-import * as bcrypt from "bcrypt"
 import mongoose from "mongoose";
-
+/**
+ * @description : Student schema give property for generate new admin as well as perform CRUD operation
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @export
+ * @class Admin
+ */
 @Schema({
     timestamps :true
 })

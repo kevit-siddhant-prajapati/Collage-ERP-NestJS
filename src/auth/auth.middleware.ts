@@ -13,6 +13,15 @@ export class StudentAuthMiddleware implements NestMiddleware{
         @InjectModel(Student.name) private readonly StudentModel : Model<Student>,
     ){
     }
+
+
+    /**
+     * @description : Student Middleware use for student authorization
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {*} req : Request comming from postman
+     * @param {*} res : Responce back to postman
+     * @param {(error?: any) => void} next
+     */
     async use(req: any, res: any, next: (error?: any) => void) {
         try {
             console.log('Student Middleware is implimented!')
@@ -40,6 +49,13 @@ export class StudentAuthMiddleware implements NestMiddleware{
     
 }
 
+/**
+ * @description : Staff middleware use for staff authorization
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @export
+ * @class StaffAuthMiddleware
+ * @implements {NestMiddleware}
+ */
 @Injectable()
 export class StaffAuthMiddleware implements NestMiddleware{
 
@@ -72,6 +88,14 @@ export class StaffAuthMiddleware implements NestMiddleware{
     
 }
 
+
+/**
+ * @description : AdminMiddleware use for admin authorization
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @export
+ * @class AdminAuthMiddleware
+ * @implements {NestMiddleware}
+ */
 @Injectable()
 export class AdminAuthMiddleware implements NestMiddleware{
     constructor(
@@ -85,7 +109,8 @@ export class AdminAuthMiddleware implements NestMiddleware{
             const token = req.header('Authorization')
             const tokenArr = token.split(' ')
             console.log(`token admin middleware ${tokenArr[1]}`)
-            const decoded: any = jwt.verify(tokenArr[1], process.env.JWT_SECRET_CODE)   //there is problem
+            const decoded: any = jwt.verify(tokenArr[1], process.env.JWT_SECRET_CODE)   
+            console.log()
             if(!decoded){
                 throw Error('do not verify token')
             }
@@ -102,7 +127,3 @@ export class AdminAuthMiddleware implements NestMiddleware{
     }
     
 }
-
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTMzNjYwZTdmMjQ1MGVmZmI5OWY2NGMiLCJpYXQiOjE2OTkyNjE4NjgsImV4cCI6MTY5OTI2NTQ2OH0.C4m2r8rHaN24cXrbwzmRkTKv3UTbxN-9JVzrfm9FQVQ
-
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTMzNjYwZTdmMjQ1MGVmZmI5OWY2NGMiLCJpYXQiOjE2OTkyNjE2NjQsImV4cCI6MTY5OTI2NTI2NH0.8E3JLpnu59EJ6qFZ9QKOjuci3Jn3T9T2q3eQH5CAlOk"

@@ -14,6 +14,10 @@ export class AdminService {
     ) {}
 
 
+    /**
+     * @description : Give the data of all admin
+     * @returns {*}  {Promise<Admin[]>}
+     */
     async findAll() : Promise<Admin[]>{
         const admins = await this.AdminModel.find({})
         const publicAdmin = new UserMiddleware()
@@ -22,6 +26,11 @@ export class AdminService {
     }
 
 
+    /**
+     * @description : get admin data using id
+     * @param {string} id
+     * @returns {*}  {Promise<Admin>}
+     */
     async findById(id: string) : Promise<Admin>{
       const admin = await this.AdminModel.findById(id)
       const publicAdmin = new UserMiddleware()
@@ -30,6 +39,11 @@ export class AdminService {
     }
 
 
+    /**
+     * @description : create new admin
+     * @param {Admin} adminData
+     * @returns {*}  {Promise<Admin>}
+     */
     async createOne(adminData : Admin) : Promise<Admin> {
       const publicAdmin = new UserMiddleware()
       const hashedpasswordAdmin = await publicAdmin.convertToHash(adminData)
@@ -47,6 +61,12 @@ export class AdminService {
       }
     } 
 
+    /**
+     * @description : 
+     * @param {string} id
+     * @param {Admin} admindata
+     * @returns {*}  {Promise<Admin>}
+     */
     async updateOne(id : string, admindata: Admin) : Promise<Admin> {
       const updatable = ['name', 'email', 'password']
       const updateAdmin = Object.keys(admindata)
@@ -67,7 +87,12 @@ export class AdminService {
       return updatedAdmin
     }
 
-    
+    /**
+     * @description : delete admin by using its id
+     * @author Siddhant Prajapati
+     * @param {string} id
+     * @returns {*} 
+     */
     async deleteOne(id : string) {
       const deletedAdmin = await this.AdminModel.findByIdAndDelete(id)
       return deletedAdmin

@@ -1,10 +1,14 @@
 import { Schema, Prop, SchemaFactory, raw } from "@nestjs/mongoose";
 import validator from "validator";
-import * as jwt from "jsonwebtoken"
-import * as bcrypt from "bcrypt"
 import mongoose from "mongoose";
 import { IsOptional } from "class-validator";
 
+/**
+ * @description : Student schema give property for generate new student
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @export
+ * @class Staff
+ */
 @Schema({
     timestamps :true
 })
@@ -76,6 +80,7 @@ export class Staff{
         required: true,
       })
 
+    @IsOptional()
     tokens: Array<{ token: string }>;
 
 }

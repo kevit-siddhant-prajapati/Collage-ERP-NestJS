@@ -7,23 +7,45 @@ import { UpdateAdminDto } from './dto/update-admin.dto';
 @Controller('admin')
 export class AdminController {
     constructor(private adminService : AdminService){}
-
-    @Get('all')
+/**
+ * @description : this route give data all admin
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @returns {*}  {Promise<Admin[]>}
+ */
+@Get('all')
     async getAllAdmins() : Promise<Admin[]> {
         return this.adminService.findAll()
     }
 
-
+    /**
+     * @description : this route find bby its id
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {*} id
+     * @returns {*}  {Promise<Admin>}
+     */
     @Get('/:id')
     async getAdminById(@Param('id') id) : Promise<Admin> {
         return this.adminService.findById(id)
     }
 
+    /**
+     * @description : this route create new admin
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {CreateAdminDto} input
+     * @returns {*}  {Promise<Admin>}
+     */
     @Post('new')
     async addAdmin(@Body() input: CreateAdminDto) : Promise<Admin> {
         return this.adminService.createOne(input)
     }
 
+    /**
+     * @description : Update admin using its id 
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {UpdateAdminDto} admin
+     * @param {string} id
+     * @returns {*}  {Promise<Admin>}
+     */
     @Patch('/update/:id')
     async updateAdmin(
         @Body() admin: UpdateAdminDto,
@@ -32,6 +54,12 @@ export class AdminController {
         return this.adminService.updateOne(id, admin)
     }
 
+    /**
+     * @description : delete admin using its id
+     * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+     * @param {string} id
+     * @returns {*} 
+     */
     @Delete('/delete/:id')
     @HttpCode(204)
     async deleteAdmin(

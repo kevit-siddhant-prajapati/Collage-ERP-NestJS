@@ -6,7 +6,12 @@ import { AttendanceSchema } from 'src/attendance/schemas/attendance.schema';
 import { StaffSchema } from 'src/staff/schemas/staff.schema';
 import { StudentSchema } from 'src/student/schemas/student.schema';
 import { AdminSchema } from 'src/admin/schemas/admin.schema';
-
+/**
+ * @description : module use for authentication user as well as authorization user
+ * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
+ * @export
+ * @class AuthModule
+ */
 @Module({
   imports : [
     MongooseModule.forFeature([
