@@ -3,10 +3,10 @@ import { AttendanceService } from './attendance.service';
 import { AttendanceController } from './attendance.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AttendanceSchema } from './schemas/attendance.schema';
-import { StudentSchema } from 'src/student/schemas/student.schema';
-import { StaffSchema } from 'src/staff/schemas/staff.schema';
-import { AdminAuthMiddleware } from 'src/auth/auth.middleware';
-import { AdminSchema } from 'src/admin/schemas/admin.schema';
+import { StudentSchema } from '../student/schemas/student.schema';
+import { StaffSchema } from '../staff/schemas/staff.schema';
+import { AdminAuthMiddleware } from '../auth/auth.middleware';
+import { AdminSchema } from '../admin/schemas/admin.schema';
 
 /**
  * @description : this model import model of all type of user 

@@ -1,8 +1,8 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { Attendance } from 'src/attendance/schemas/attendance.schema';
-import { Student } from 'src/student/schemas/student.schema';
+import { Attendance } from '../attendance/schemas/attendance.schema';
+import { Student } from '../student/schemas/student.schema';
 import { Analysis1Dto } from './dto/analysis1.dto';
 import { Analysis2Dto } from './dto/analysis2.dto';
 import { Analysis3Dto } from './dto/analysis3.dto';

@@ -1,11 +1,13 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Student } from './schemas/student.schema';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { StudentAuthGuard } from './studentAuth.guard';
 
 
 @Controller('students')
+//@UseGuards(StudentAuthGuard) :- generated unexpected result
 export class StudentController {
     constructor(private studentService : StudentService){}
 
@@ -26,7 +28,7 @@ export class StudentController {
      * @param {*} id
      * @returns {*}  {Promise<Student>}
      */
-    @Get('/:id')
+    @Get('get/:id')
     async getStudentById(@Param('id') id) : Promise<Student> {
         return this.studentService.findById(id)
     }

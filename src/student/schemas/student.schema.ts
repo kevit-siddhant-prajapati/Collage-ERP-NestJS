@@ -13,9 +13,7 @@ import mongoose from "mongoose";
     timestamps :true
 })
 export class Student{
-    static findByCredentials(email: any, password: any) {
-        throw new Error('Method not implemented.');
-    }
+
     @Prop({
         required : true,
         trim : true,

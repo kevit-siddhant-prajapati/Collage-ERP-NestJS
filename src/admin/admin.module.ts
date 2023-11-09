@@ -4,7 +4,7 @@ import { AdminController } from './admin.controller';
 import { JwtService } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AdminSchema } from './schemas/admin.schema';
-import { AdminAuthMiddleware } from 'src/auth/auth.middleware';
+import { AdminAuthMiddleware } from '../auth/auth.middleware';
 /**
  * @description : import AdminSchema and connect controller and service
  * @author Siddhant Prajapati

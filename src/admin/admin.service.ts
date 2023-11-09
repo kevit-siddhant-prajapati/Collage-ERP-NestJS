@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Admin } from './schemas/admin.schema';
 import mongoose from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
-import { UserMiddleware } from 'src/middleware/user.middleware';
+import { UserMiddleware } from '../middleware/user.middleware';
 
 @Injectable()
 export class AdminService {

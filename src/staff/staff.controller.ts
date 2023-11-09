@@ -25,7 +25,7 @@ export class StaffController {
      * @param {*} id
      * @returns {*}  {Promise<Staff>}
      */
-    @Get('/:id')
+    @Get('get/:id')
     async getStaffById(@Param('id') id) : Promise<Staff> {
         return this.staffService.findById(id)
     }

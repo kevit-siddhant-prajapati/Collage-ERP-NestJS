@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Attendance } from './schemas/attendance.schema';
-import { Student } from 'src/student/schemas/student.schema';
-import { Staff } from 'src/staff/schemas/staff.schema';
+import { Student } from '../student/schemas/student.schema';
+import { Staff } from '../staff/schemas/staff.schema';
 import mongoose, { Model } from 'mongoose';
 import { fillAttendanceDto } from './dto/fill-Attendance.dto';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';

@@ -4,10 +4,10 @@ import { StaffController } from './staff.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { StaffModel, StaffSchema } from './schemas/staff.schema';
 import { JwtService } from '@nestjs/jwt';
-import { AdminAuthMiddleware, StaffAuthMiddleware } from 'src/auth/auth.middleware';
-import { AdminModule } from 'src/admin/admin.module';
-import { AdminSchema } from 'src/admin/schemas/admin.schema';
-import { AttendanceSchema } from 'src/attendance/schemas/attendance.schema';
+import { AdminAuthMiddleware, StaffAuthMiddleware } from '../auth/auth.middleware';
+import { AdminModule } from '../admin/admin.module';
+import { AdminSchema } from '../admin/schemas/admin.schema';
+import { AttendanceSchema } from '../attendance/schemas/attendance.schema';
 
 /**
  * @description : Staffmodule connect controller and services
@@ -36,21 +36,20 @@ export class StaffModule {
    * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
    * @param {MiddlewareConsumer} consumer
    */
-  configure(consumer : MiddlewareConsumer){
-    
+  configure(consumer: MiddlewareConsumer) {
+    // Apply StaffAuthMiddleware for '/staffs/all'
     consumer
       .apply(StaffAuthMiddleware)
-      .forRoutes(
-        {path : 'staffs/all' , method : RequestMethod.GET},
-      )
-
+      .forRoutes({ path: 'staffs/all', method: RequestMethod.GET });
+  
+    // Apply AdminAuthMiddleware for all other routes
     consumer
-    .apply(AdminAuthMiddleware)
-    .forRoutes(
-      {path : 'staffs/:id' , method : RequestMethod.GET},
-      {path : 'staffs/new' , method : RequestMethod.POST},
-      {path : 'staffs/update/:id' , method : RequestMethod.PATCH},
-      {path : 'staffs/delete/:id' , method : RequestMethod.DELETE}
-    )
+      .apply(AdminAuthMiddleware)
+      .forRoutes(
+        { path: 'staffs/get/:id', method: RequestMethod.GET },
+        { path: 'staffs/new', method: RequestMethod.POST },
+        { path: 'staffs/update/:id', method: RequestMethod.PATCH },
+        { path: 'staffs/delete/:id', method: RequestMethod.DELETE }
+      );
   }
 }

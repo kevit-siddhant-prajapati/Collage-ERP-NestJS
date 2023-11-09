@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Admin } from 'src/admin/schemas/admin.schema';
-import { UserMiddleware } from 'src/middleware/user.middleware';
-import { Staff } from 'src/staff/schemas/staff.schema';
-import { Student } from 'src/student/schemas/student.schema';
+import { Admin } from '../admin/schemas/admin.schema';
+import { UserMiddleware } from '../middleware/user.middleware';
+import { Staff } from '../staff/schemas/staff.schema';
+import { Student } from '../student/schemas/student.schema';
 import { Request } from 'express';
 
 @Injectable()
@@ -32,7 +32,7 @@ async loginStudent(credentials ) : Promise<Student>{
         await publicStudent.findByCredentials(password,student.password)
 
         const token = await publicStudent.generateAuthToken(student)
-        console.log("generated token"+token)
+        //console.log("generated token"+token)
         if(publicStudent.findByCredentials(password,student.password)){
           return student
         }
@@ -45,7 +45,7 @@ async loginStudent(credentials ) : Promise<Student>{
        * @returns {*}  {Promise<Staff>}
        */
       async loginStaff(credentials ) : Promise<Staff>{
-        console.log('login Staff is selected')
+        //console.log('login Staff is selected')
         const email = credentials.email
         const password = credentials.password
         // console.log(`email is: ${email}
@@ -90,7 +90,6 @@ async loginStudent(credentials ) : Promise<Student>{
       }
 
       async logout(){
-
         await this.StudentModel.updateMany({}, { $set: { tokens: [] } })
         await this.AdminModel.updateMany({}, { $set: { tokens: [] } })
         await this.StaffModel.updateMany({}, { $set: { tokens: [] } })

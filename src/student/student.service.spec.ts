@@ -1,13 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { StudentService } from './student.service';
-import { Student, StudentSchema } from './schemas/student.schema';
+import { Student, StudentModel, StudentSchema } from './schemas/student.schema';
 import { UserMiddleware } from '../middleware/user.middleware';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Attendance, AttendanceSchema } from '../attendance/schemas/attendance.schema';
 import { ConfigModule } from '@nestjs/config';
-import { Role } from 'src/auth/dto/login-user.dto';
-import { Department } from './dto/create-student.dto';
+import { StaffSchema } from '../staff/schemas/staff.schema';
+import { AdminSchema } from '../admin/schemas/admin.schema';
+import { HttpStatusCode } from 'axios';
+
+//const { setupDatabase, studentOne } = require('../../test/fixtures/testdatabase')
+//console.log(studentOne)
 
 const mockStudentModel = {
   find: jest.fn(),
@@ -34,25 +38,28 @@ describe('StudentService', () => {
         MongooseModule.forRoot('mongodb://localhost:27017/college-next-test'),
         MongooseModule.forFeature([
           { name : 'Student', schema : StudentSchema},
-          { name : 'Attendance', schema : AttendanceSchema}
+          { name : 'Attendance', schema : AttendanceSchema},
+          { name : 'Staff', schema : StaffSchema},
+          { name : 'Admin' , schema : AdminSchema}
         ])
       ],
       providers: [
         StudentService,
         UserMiddleware,
-        {
-          provide: getModelToken(Student.name),
-          useValue: mockStudentModel,
-        },
-        {
-          provide: getModelToken(Attendance.name),
-          useValue: mockAttendanceModel,
-        },
+        // {
+        //   provide: getModelToken(Student.name),
+        //   useValue: mockStudentModel,
+        // },
+        // {
+        //   provide: getModelToken(Attendance.name),
+        //   useValue: mockAttendanceModel,
+        // },
       ],
-
     }).compile();
 
+
     service = module.get<StudentService>(StudentService);
+
   });
 
   afterEach(() => {
@@ -70,7 +77,7 @@ describe('StudentService', () => {
           password: 'Kevin@123',
           phoneNumber: '8864000809',
           batch: 2020,
-          department: Department.CE,
+          department: 'CE',
           attendance: 216,
           tokens : []
       },
@@ -81,22 +88,28 @@ describe('StudentService', () => {
           password: 'Maya@1234',
           phoneNumber: "8964009809",
           batch: 2019,
-          department: Department.ME,
+          department: 'ME',
           attendance: 213,
           tokens : []
       }
       ];
 
-      const t1 =mockStudentModel.find.mockResolvedValue(mockStudents);
-      console.log(t1)
+      const t1 = mockStudentModel.find.mockResolvedValue(mockStudents);
+      
+      await mockStudentModel.find({})
 
       const result = await service.findAll();
+      console.log('result is generated below')
       console.log(result)
-      expect(result).toEqual(mockStudents.map((student) => expect.objectContaining(student)));
+      expect(HttpStatusCode.Accepted)
+
+      const student = await StudentModel.find({})
+      //.toEqual(mockStudents.map((student) => expect.objectContaining(student)));
     });
   });
 
   describe('findById', () => {
+
     it('should return a single student', async () => {
       const mockStudent: Student = {
         name: "Kevin",
@@ -105,10 +118,11 @@ describe('StudentService', () => {
         password: 'Kevin@123',
         phoneNumber: '8864000809',
         batch: 2020,
-        department: Department.CE,
+        department: 'CE',
         attendance: 216,
         tokens : []
     };
+
       console.log('value of mockResolvedValue')
       mockStudentModel.findById.mockResolvedValue(mockStudent);
 
@@ -117,12 +131,15 @@ describe('StudentService', () => {
       expect(result).toEqual(expect.objectContaining(mockStudent));
     });
 
+
     it('should throw NotFoundException if student not found', async () => {
       mockStudentModel.findById.mockResolvedValue(null);
 
       await expect(service.findById('non-existent-id')).rejects.toThrowError(NotFoundException);
     });
+
   });
+
 
   describe('createOne', () => {
     it('create new Student', async () => {

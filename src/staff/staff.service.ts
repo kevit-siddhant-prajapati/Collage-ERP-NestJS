@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Staff } from './schemas/staff.schema';
 import mongoose from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
-import { UserMiddleware } from 'src/middleware/user.middleware';
-import { Attendance } from 'src/attendance/schemas/attendance.schema';
+import { UserMiddleware } from '../middleware/user.middleware';
+import { Attendance } from '../attendance/schemas/attendance.schema';
 
 @Injectable()
 export class StaffService {

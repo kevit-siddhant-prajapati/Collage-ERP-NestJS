@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Inject, Param, Patch, Post } from '@nestjs/common';
 import { AttendanceService } from './attendance.service';
 import { fillAttendanceDto } from './dto/fill-Attendance.dto';
-import { StudentModel } from 'src/student/schemas/student.schema';
+import { StudentModel } from '../student/schemas/student.schema';
 import { ManageAttendanceDto } from './dto/manage-attendance.dto';
 import { GetAttendanceDto } from './dto/get-attendance.dto';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';

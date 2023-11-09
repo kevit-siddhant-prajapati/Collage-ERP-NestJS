@@ -14,7 +14,7 @@ export class UserMiddleware{
  * @param {*} user
  * @returns {*} 
  */
-    getPublicProfile(user : any){
+    getPublicProfile(user : Staff | Student | Admin | any){
         let newUser = ({...user}._doc)
         delete newUser["password"]
         delete newUser["tokens"]
@@ -63,8 +63,8 @@ export class UserMiddleware{
     async convertToHash(user){
         const newPassword:any = await bcrypt.hash(user.password, 8); //generate hash password from student's password 
         user.password = newPassword;
-        console.log('User is given below')
-        console.log(user)
+        //console.log('User is given below')
+        //console.log(user)
         return user
     }
 }
