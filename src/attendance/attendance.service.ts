@@ -75,7 +75,7 @@ export class AttendanceService {
      * @param {fillAttendanceDto} attendanceData
      * @returns {*} 
      */
-    async fillStaffAttendance(attendanceData :fillAttendanceDto) {
+    async fillStaffAttendance(attendanceData :fillAttendanceDto) : Promise<string> {
         const attendStaff = attendanceData.attendance;
         for (const attendie of attendStaff) {
             //find data of each staff that is given in array
