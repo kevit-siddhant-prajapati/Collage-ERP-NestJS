@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StaffService } from './staff.service';
 import { Staff } from './schemas/staff.schema';
-import { UserMiddleware } from '../middleware/user.middleware';
 
 const mockStaffModel = {
   find: jest.fn(),

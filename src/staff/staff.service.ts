@@ -2,9 +2,9 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/mongoose';
 import { Staff } from './schemas/staff.schema';
 import mongoose from 'mongoose';
-import { JwtService } from '@nestjs/jwt';
-import { UserMiddleware } from '../middleware/user.middleware';
+import { UserHelper } from '../helper/user.helper';
 import { Attendance } from '../attendance/schemas/attendance.schema';
+import { logger } from '../logger/logger.service';
 
 @Injectable()
 export class StaffService {
@@ -25,8 +25,8 @@ export class StaffService {
         if(process.env.NODE_ENV === 'test'){
           return staffs
         }
-        const publicStaff = new UserMiddleware()
-        const secureStaff = staffs.map(staff => publicStaff.getPublicProfile(staff))
+        const secureStaff = staffs.map(staff => UserHelper.getPublicProfile(staff))
+        logger.info(`Successfully getting data of all staff`)
         return secureStaff;
     }
 
@@ -42,8 +42,12 @@ export class StaffService {
       if(process.env.NODE_ENV === 'test'){
         return staff
       }
-      const publicStaff = new UserMiddleware()
-      publicStaff.getPublicProfile(staff)
+      if(!staff){
+        logger.error(`Unable to find data of Staff id : ${id}`)
+        throw new NotFoundException('Unable to find data of given staff')
+      }
+      UserHelper.getPublicProfile(staff)
+      logger.info(`Successfully get data of Staff id : ${id}`)
       return staff;
     }
 
@@ -56,18 +60,18 @@ export class StaffService {
      */
     async createOne(staffData : Staff) : Promise<Staff> {
       if(process.env.NODE_ENV !== 'test'){
-        const publicStaff = new UserMiddleware()
-        const hashedpasswordStaff = await publicStaff.convertToHash(staffData)
+        const hashedpasswordStaff = await UserHelper.convertToHash(staffData)
         const newStaff = new this.StaffModel(hashedpasswordStaff)
         if(!newStaff){
+          logger.error(`Invalid Staff data provided`)
           throw new BadRequestException('Enter valid Staffdata ')
         }
         try {
-          const tokenGenerator = new UserMiddleware()
-          tokenGenerator.generateAuthToken(newStaff)
+          UserHelper.generateAuthToken(newStaff)
+          logger.info(`Successfully generate new Staff of id: ${newStaff._id}`)
           return newStaff
         } catch(e){
-          console.log(e)
+          logger.error(`Error : ${e}`)
         }
       } else{
         return staffData
@@ -86,20 +90,23 @@ export class StaffService {
         console.log(`updateable staff is call:`)
         const updatable = ['name', 'email', 'password', 'phoneNumber', 'attendance', 'department']
         const updateStaff = Object.keys(staffdata)
+        // check for if update is valid or not
         const isValidUpdate = updateStaff.every(update => updatable.includes(update))
         if(!isValidUpdate){
+          logger.error('Invalid update for Staff')
           throw new BadRequestException('not valid Update')
         }
-        const publicStaff = new UserMiddleware()
+        // check for update is password if it is password then convert it to hashpassword
         if(staffdata.hasOwnProperty('password')){
-          staffdata = await publicStaff.convertToHash(staffdata)
-          console.log(staffdata)
+          staffdata = await UserHelper.convertToHash(staffdata)
         }
         const updatedStaff = await this.StaffModel.findByIdAndUpdate(id, staffdata)
-        publicStaff.getPublicProfile(updatedStaff)
+        UserHelper.getPublicProfile(updatedStaff)
         if(!updatedStaff){
+          logger.error(`Unable to find Staff of id : ${id}`)
           throw new NotFoundException('Given staff not found')
         }
+        logger.info(`Update staff successfully of staff id : ${id}`)
         return updatedStaff
       } else{
         return staffdata
@@ -114,7 +121,13 @@ export class StaffService {
     async deleteOne(id : string) {
       const staff = await this.StaffModel.findByIdAndDelete(id)
       if(process.env.NODE_ENV !== 'test'){
+        if(!staff){
+          logger.error(`Unable to find Staff of Staff id : ${id}`)
+          throw new NotFoundException('Unable to Staff of given id')
+        }
+        //delete attendance releted to that staff
         await this.AttendanceModel.deleteMany({ userId : staff._id})
+        logger.info(`Successfully delete data of Staff: ${id}`)  
       }
     }
 }

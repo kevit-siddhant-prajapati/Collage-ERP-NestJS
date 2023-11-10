@@ -1,16 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Admin } from './schemas/admin.schema';
 import mongoose from 'mongoose';
-import { JwtService } from '@nestjs/jwt';
-import { UserMiddleware } from '../middleware/user.middleware';
+import { UserHelper } from '../helper/user.helper';
+import { logger } from '../logger/logger.service';
 
 @Injectable()
 export class AdminService {
     constructor(
         @InjectModel(Admin.name)
         private AdminModel : mongoose.Model<Admin>,
-        private jwtService : JwtService
     ) {}
 
 
@@ -23,8 +22,8 @@ export class AdminService {
         if(process.env.NODE_ENV === 'test'){
           return admins
         }
-        const publicAdmin = new UserMiddleware()
-        const secureAdmin = admins.map(admin => publicAdmin.getPublicProfile(admin))
+        const secureAdmin = admins.map(admin => UserHelper.getPublicProfile(admin))
+        logger.info(`Successfully getting data of all Admin`)
         return secureAdmin;
     }
 
@@ -39,8 +38,12 @@ export class AdminService {
       if(process.env.NODE_ENV === 'test'){
         return admin
       }
-      const publicAdmin = new UserMiddleware()
-      const secureAdmin = publicAdmin.getPublicProfile(admin)
+      if(!admin){
+        logger.error(`Unable to find data of Admin of Admin id : ${id}`)
+        throw new NotFoundException('Unable to find data of Admin')
+      }
+      const secureAdmin = UserHelper.getPublicProfile(admin)
+      logger.info(`Successfully getting data of admin Id : ${id}`)
       return secureAdmin;
     }
 
@@ -52,19 +55,19 @@ export class AdminService {
      */
     async createOne(adminData : Admin) : Promise<Admin> {
       if(process.env.NODE_ENV !== 'test'){
-        const publicAdmin = new UserMiddleware()
-        const hashedpasswordAdmin = await publicAdmin.convertToHash(adminData)
+        const hashedpasswordAdmin = await UserHelper.convertToHash(adminData)
         const newAdmin = new this.AdminModel(hashedpasswordAdmin)
         if(!newAdmin){
-          throw new BadRequestException('Enter valid Staffdata ')
+          logger.error(`Admin data  is invalid`)
+          throw new BadRequestException('Enter valid Admindata ')
         }
-        
         try {
-          const publicAdmin = new UserMiddleware()
-          publicAdmin.generateAuthToken(newAdmin)
+          UserHelper.generateAuthToken(newAdmin)
+          logger.info(`successfully create new admin of admin id : ${newAdmin._id}`)
           return newAdmin
         } catch(e){
-          console.log(e)
+          logger.error(`error : ${e}`)
+          throw new InternalServerErrorException(e)
         }
       } else{
         return adminData
@@ -81,20 +84,23 @@ export class AdminService {
       if(process.env.NODE_ENV !== 'test'){
         const updatable = ['name', 'email', 'password']
         const updateAdmin = Object.keys(admindata)
+        //check for update is valid or not
         const isValidUpdate = updateAdmin.every(update => updatable.includes(update))
         if(!isValidUpdate){
+          logger.error(`Invalid Update for Admin id : ${id}`)
           throw new BadRequestException('not valid Update')
         }
-        const publicAdmin = new UserMiddleware()
+        //check that update is password if it is password then convert it to hash value before store
         if(admindata.hasOwnProperty('password')){
-          admindata = await publicAdmin.convertToHash(admindata)
-          console.log(admindata)
+          admindata = await UserHelper.convertToHash(admindata)
         }
         const updatedAdmin = await this.AdminModel.findByIdAndUpdate(id, admindata)
-        publicAdmin.getPublicProfile(updatedAdmin)
+        UserHelper.getPublicProfile(updatedAdmin)
         if(!updatedAdmin){
+          logger.error(`Given Admin not found of Admin id : ${id}`)
           throw new NotFoundException('Given Admin not found')
         }
+        logger.info(`Admin updated successfully of staff id : ${id}`)
         return updatedAdmin
       } else{
         return admindata
@@ -109,6 +115,11 @@ export class AdminService {
      */
     async deleteOne(id : string) {
       const deletedAdmin = await this.AdminModel.findByIdAndDelete(id)
+      if(!deletedAdmin){
+        logger.error(`Admin of admin id not found : ${id}`)
+        throw new NotFoundException(`Given Admin not found`)
+      }
+      logger.info(`Admin deleted Successfully of admin id : ${id}`)
       return deletedAdmin
     }
 }

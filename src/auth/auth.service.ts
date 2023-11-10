@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Admin } from '../admin/schemas/admin.schema';
-import { UserMiddleware } from '../middleware/user.middleware';
+import { UserHelper } from '../helper/user.helper';
 import { Staff } from '../staff/schemas/staff.schema';
 import { Student } from '../student/schemas/student.schema';
-import { Request } from 'express';
+import { logger } from '../logger/logger.service';
 
 @Injectable()
 export class AuthService {
@@ -26,13 +26,13 @@ async loginStudent(credentials) : Promise<Student>{
         const password = credentials.password
         const student :any = await this.StudentModel.findOne({ email : email });
         if (!student) {
-            return null;
+          logger.error(`Given student of credential not found ${credentials}`)
+          throw new NotFoundException('Given student not found')
         }
-        const publicStudent = new UserMiddleware()
-        await publicStudent.findByCredentials(password,student.password)
-
-         await publicStudent.generateAuthToken(student)
-        if(publicStudent.findByCredentials(password,student.password)){
+        await UserHelper.findByCredentials(password,student.password)
+         await UserHelper.generateAuthToken(student)
+        if(UserHelper.findByCredentials(password,student.password)){
+          logger.info(`Student Successfully login`)
           return student
         }
       }
@@ -48,12 +48,12 @@ async loginStudent(credentials) : Promise<Student>{
         const password = credentials.password
         const staff :any = await this.StaffModel.findOne({ email : email });
         if (!staff) {
-            return null;
+          logger.error(`Given staff of credential not found ${credentials}`)
+          throw new NotFoundException('Given staff not found')
         }
-        const publicStaff = new UserMiddleware()
-        await publicStaff.findByCredentials(password, staff.password)
-        await publicStaff.generateAuthToken(staff)
-        if(publicStaff.findByCredentials(password,staff.password)){
+        await UserHelper.findByCredentials(password, staff.password)
+        await UserHelper.generateAuthToken(staff)
+        if(UserHelper.findByCredentials(password,staff.password)){
           return staff
         }
       }
@@ -68,12 +68,13 @@ async loginStudent(credentials) : Promise<Student>{
         const password = credentials.password
         const admin :any = await this.AdminModel.findOne({ email : email });
         if (!admin) {
-            return null;
+          logger.error(`Given admin of credential not found ${credentials}`)
+          throw new NotFoundException('Given admin not found')
         }
-        const publicAdmin = new UserMiddleware()
-        await publicAdmin.findByCredentials(password, admin.password)
-        await publicAdmin.generateAuthToken(admin)
-        if(publicAdmin.findByCredentials(password, admin.password)){
+        await UserHelper.findByCredentials(password, admin.password)
+        await UserHelper.generateAuthToken(admin)
+        if(UserHelper.findByCredentials(password, admin.password)){
+          logger.info(`Staff successfully login`)
           return admin
         }
       }
@@ -82,5 +83,6 @@ async loginStudent(credentials) : Promise<Student>{
         await this.StudentModel.updateMany({}, { $set: { tokens: [] } })
         await this.AdminModel.updateMany({}, { $set: { tokens: [] } })
         await this.StaffModel.updateMany({}, { $set: { tokens: [] } })
+        logger.info('Logout successfully')
       }
 }
