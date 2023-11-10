@@ -120,7 +120,7 @@ export class AnalysisService {
             const batchSize = inputData.batch || 2020; // Replace with the desired batch year
             const branch = inputData.department || 'CE'; // Replace with the desired branch
             const semester = inputData.currentSem || 1; // Replace with the desired semester
-
+            
             const result = await this.AttendanceModel.aggregate([
             /**$lookup : this pipe used for getting data from student collection
              * it map userId of attendence with _id of student

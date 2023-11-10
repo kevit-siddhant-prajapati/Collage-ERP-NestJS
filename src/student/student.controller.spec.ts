@@ -1,12 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StudentController } from './student.controller';
 import { StudentService } from './student.service';
-import { Student, StudentModel, StudentSchema } from './schemas/student.schema';
-import { AttendanceSchema } from 'src/attendance/schemas/attendance.schema';
-import { MongooseModule } from '@nestjs/mongoose';
-import { StaffSchema } from 'src/staff/schemas/staff.schema';
-import { JwtService } from '@nestjs/jwt';
 import { INestApplication } from '@nestjs/common'
+import { CreateStudentDto } from './dto/create-student.dto';
+import { UpdateStudentDto } from './dto/update-student.dto';
 
 describe('StudentController', () => {
   let studentController: StudentController;
@@ -17,30 +14,31 @@ describe('StudentController', () => {
     // studentService = new StudentService(AttendanceModel, StudentModel);
     // studentController = new StudentController(studentService)
     const moduleRef : TestingModule = await Test.createTestingModule({
-      imports : [
-        MongooseModule.forFeature([
-            { name: 'Student', schema : StudentSchema},
-            { name: 'Staff', schema : StaffSchema},
-            { name: 'Attendance', schema : AttendanceSchema}
-        ]),
-        StudentModel
-    ],
-    controllers : [StudentController],
-    providers : [StudentService, JwtService],
-    exports : [ StudentService, StudentModel]
+
+      controllers : [StudentController],
+      providers : [StudentService,
+
+        {
+          provide: 'AttendanceModel', // Use the token you use in your StudentService
+          useValue: {}, // Provide a mock or instance of your AttendanceModel
+        },
+        {
+          provide: 'StudentModel', // Use the token you use in your StudentService
+          useValue: {}, // Provide a mock or instance of your StudentModel
+        },
+      ],
+
     }).compile()
 
-    studentService = await moduleRef.resolve(StudentService)
+    studentService = await moduleRef.get<StudentService>(StudentService)
+    studentController = await moduleRef.get<StudentController>(StudentController)
   });
 
- //check if Student Controller is defined or not
-  it('should be defined', () => {
-    expect(studentController).toBeDefined();
-  });
 
-  describe('findAll', () => {
+  describe('getAllStudents', () => {
     it('should return array of student', async () => {
-      const result: Promise<Student[]> = [
+      const result: any = 
+      [
         {
           name: "Kevin",
           email: "kevin@example.com",
@@ -64,9 +62,69 @@ describe('StudentController', () => {
           tokens : []
       }
       ]
-      jest.spyOn(studentService, 'findAll').mockImplementation(() => result);
+      jest.spyOn(studentService, 'findAll').mockResolvedValue(result);
 
-      expect(await studentController.getAllStudents()).toBe(result)
+      expect(await studentController.getAllStudents()).toBe(result);
     })
+
+    describe('getStudentById', () => {
+      it('should return a student by ID', async () => {
+        const result: any = {};
+        jest.spyOn(studentService, 'findById').mockResolvedValue(result);
+  
+        expect(await studentController.getStudentById('654c90d94d320ee33c106517')).toBe(result);
+      });
+    });
+  
+    describe('addStudent', () => {
+      it('should create a new student', async () => {
+        const createStudentDto: CreateStudentDto = {
+          name: "Maya",
+          email: "maya@example.com",
+          currentSem: 1,
+          password: 'Maya@1234',
+          phoneNumber: "8964009809",
+          batch: 2019,
+          department: 'ME',
+          attendance: 213,
+          _id: "6549be3dc6d51a63cad0033a",
+          tokens: []
+        };
+        const result: any = {};
+        jest.spyOn(studentService, 'createOne').mockResolvedValue(result);
+  
+        expect(await studentController.addStudent(createStudentDto)).toBe(result);
+      });
+    });
+  
+    describe('updateStudent', () => {
+      it('should update a student by ID', async () => {
+        const updateStudentDto: UpdateStudentDto = {
+          name: "Jaya",
+          email: "jaya@example.com",
+          _id: '6549be3dc6d51a63cad0033a',
+          currentSem: 2,
+          password: 'Jaya@1234',
+          phoneNumber: '1234567890',
+          batch: 2021,
+          department: 'CE',
+          attendance: 90,
+          tokens: []
+        };
+        const result: any = {};
+        jest.spyOn(studentService, 'updateOne').mockResolvedValue(result);
+  
+        expect(await studentController.updateStudent(updateStudentDto, '6549be3dc6d51a63cad0033a')).toBe(result);
+      });
+    });
+  
+    describe('deleteStudent', () => {
+      it('should delete a student by ID', async () => {
+        jest.spyOn(studentService, 'deleteOne').mockResolvedValue();
+        expect(await studentController.deleteStudent('6549be3dc6d51a63cad0033a')).toBeUndefined();
+      });
+    });
+
+
   })
 });

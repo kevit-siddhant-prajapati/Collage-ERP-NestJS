@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import { Student } from "../../src/student/schemas/student.schema";
 import * as jwt from 'jsonwebtoken'
+import { ObjectId } from "bson";
 
 export const studentStub = ()  => {
     const studentOne = {
-        _id : new mongoose.Types.ObjectId(),
+        _id : new ObjectId("654c90d94d320ee33c106517"),
         name : 'Mike',
         email: 'mike@example.com',
         password : 'Mike@1234',

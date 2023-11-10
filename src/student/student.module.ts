@@ -7,6 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 import { AttendanceSchema } from '../attendance/schemas/attendance.schema';
 import { StaffAuthMiddleware, StudentAuthMiddleware } from '../auth/auth.middleware';
 import { StaffSchema } from '../staff/schemas/staff.schema';
+import { DatabaseModule } from '../database/database.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 /**
  * @description : Student module import different model sd well as connect student controller and service
@@ -16,19 +18,18 @@ import { StaffSchema } from '../staff/schemas/staff.schema';
  */
 @Module({
     imports : [
+        ConfigModule,
+        DatabaseModule,
         MongooseModule.forFeature([
+            { name: 'Attendance', schema : AttendanceSchema},
             { name: 'Student', schema : StudentSchema},
             { name: 'Staff', schema : StaffSchema},
-            { name: 'Attendance', schema : AttendanceSchema}
         ]),
-        StudentModel
     ],
     controllers : [StudentController],
     providers : [StudentService, JwtService],
-    exports : [ StudentService, StudentModel]
+    exports : [ StudentService]
 })
-
-
 export class StudentModule {
 /**
  * @description : below methods connect different routes with middleware

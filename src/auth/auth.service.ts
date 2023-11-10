@@ -21,7 +21,7 @@ export class AuthService {
  * @param {*} credentials
  * @returns {*}  {Promise<Student>}
  */
-async loginStudent(credentials ) : Promise<Student>{
+async loginStudent(credentials) : Promise<Student>{
         const email = credentials.email
         const password = credentials.password
         const student :any = await this.StudentModel.findOne({ email : email });
@@ -31,8 +31,7 @@ async loginStudent(credentials ) : Promise<Student>{
         const publicStudent = new UserMiddleware()
         await publicStudent.findByCredentials(password,student.password)
 
-        const token = await publicStudent.generateAuthToken(student)
-        //console.log("generated token"+token)
+         await publicStudent.generateAuthToken(student)
         if(publicStudent.findByCredentials(password,student.password)){
           return student
         }
@@ -45,23 +44,15 @@ async loginStudent(credentials ) : Promise<Student>{
        * @returns {*}  {Promise<Staff>}
        */
       async loginStaff(credentials ) : Promise<Staff>{
-        //console.log('login Staff is selected')
         const email = credentials.email
         const password = credentials.password
-        // console.log(`email is: ${email}
-        // password: ${password}`)
         const staff :any = await this.StaffModel.findOne({ email : email });
         if (!staff) {
             return null;
         }
-        //console.log(staff)
         const publicStaff = new UserMiddleware()
-        // console.log(`Given password: ${password}
-        // actual password: ${staff.password}`)
         await publicStaff.findByCredentials(password, staff.password)
-
-        const token = await publicStaff.generateAuthToken(staff)
-        //console.log(token)
+        await publicStaff.generateAuthToken(staff)
         if(publicStaff.findByCredentials(password,staff.password)){
           return staff
         }
@@ -81,9 +72,7 @@ async loginStudent(credentials ) : Promise<Student>{
         }
         const publicAdmin = new UserMiddleware()
         await publicAdmin.findByCredentials(password, admin.password)
-
-        const token = await publicAdmin.generateAuthToken(admin)
-        //console.log(token)
+        await publicAdmin.generateAuthToken(admin)
         if(publicAdmin.findByCredentials(password, admin.password)){
           return admin
         }

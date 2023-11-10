@@ -9,6 +9,7 @@ import { StudentAuthGuard } from './studentAuth.guard';
 @Controller('students')
 //@UseGuards(StudentAuthGuard) :- generated unexpected result
 export class StudentController {
+  
     constructor(private studentService : StudentService){}
 
     /**

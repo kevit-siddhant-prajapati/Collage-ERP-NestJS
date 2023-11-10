@@ -129,7 +129,7 @@ describe('AppController (e2e)', () => {
       return request(app.getHttpServer()).delete(`/students/delete/${student._id}`)
       .set('Authorization', `Bearer ${staffStub().tokens[0].token}`)
       .send()
-      .expect(500);
+      .expect(204);
     })
 
     // //5

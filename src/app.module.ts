@@ -17,6 +17,7 @@ import { DatabaseModule } from './database/database.module';
  */
 @Module({
   imports: [
+    ConfigModule,
     ConfigModule.forRoot({
       isGlobal : true,
     }),

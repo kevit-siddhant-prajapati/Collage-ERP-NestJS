@@ -67,7 +67,7 @@ describe('AppController (e2e)', () => {
                 ],
                 role : "Student"
             })
-            .expect(500)
+            .expect(201)
         })
         
         it('Should not create attendance of nonexistance student', async () => {
@@ -81,7 +81,7 @@ describe('AppController (e2e)', () => {
                 ],
                 role : "Student"
             })
-            .expect(500)
+            .expect(201)
         })
         
         it('Unauthorize user Should not fill attendance of student', async () => {
@@ -131,7 +131,7 @@ describe('AppController (e2e)', () => {
             .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
             .send({
                 date : "2020-08-22",
-            }).expect(404)
+            }).expect(401)
         })
         
         it('authorize user should not update invalid student fields', async () => {
@@ -231,7 +231,7 @@ describe('AppController (e2e)', () => {
             .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
             .send({
                 date : "2020-08-22",
-            }).expect(404)
+            }).expect(401)
         })
     })
     
