@@ -10,7 +10,8 @@ export class UpdateAdminDto {
 
     @IsOptional()
     @IsStringOrUndefined()
-    _id : string;
+    _id : string | undefined;
+
     @IsString()
     readonly name :string
 

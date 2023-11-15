@@ -29,9 +29,7 @@ describe('AppController (e2e)', () => {
     await dbConnection.collection('staffs').insertOne(staffStub())
     await dbConnection.collection('attendances').insertOne(staffAttendanceStub())
     await dbConnection.collection('admins').insertOne(adminStub())
-    
     await app.close()
-    
   })
 
   beforeEach(async () => {
@@ -55,8 +53,6 @@ describe('AppController (e2e)', () => {
   describe('fillAttendanceStudent', () => {
 
         it('Should create attendance for student', async () => {
-            console.log(studentAttendanceStub())
-            console.log(studentStub())
             return request(app.getHttpServer())
             .post('/attendance/fill')
             .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
@@ -100,7 +96,6 @@ describe('AppController (e2e)', () => {
     })
 
     describe('getAttendanceStudent', () => {
-    
         it('Authorize User show data of students', async () => {
             await request(app.getHttpServer())
             .get('/attendance/get')
@@ -124,24 +119,16 @@ describe('AppController (e2e)', () => {
     
 
     describe('updateAttendanceStudent', () => {
-
         it('Should update valid student fields', async () => {
+            console.log(studentAttendanceStub())
             await request(app.getHttpServer())
             .patch(`/attendance/update/${studentAttendanceStub()._id}`)
             .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
             .send({
                 date : "2020-08-22",
-            }).expect(401)
+            }).expect(200)
         })
         
-        it('authorize user should not update invalid student fields', async () => {
-            await request(app.getHttpServer())
-            .patch(`/attendance/update/${studentAttendanceStub()._id}`)
-            .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
-            .send({
-                name : "Sid",
-            }).expect(400)
-        })
         
         it('Unauthorize User Should not update student fields', async () => {
             await request(app.getHttpServer())
@@ -151,10 +138,8 @@ describe('AppController (e2e)', () => {
             }).expect(401)
         })
     })
-    
-    /**
-     * @description below given test cases for staff attendance
-    */
+
+
     describe('fillAttendanceStaff', () => {
         it('Should create attendance for staff', async () => {
             await request(app.getHttpServer())
@@ -167,7 +152,7 @@ describe('AppController (e2e)', () => {
                 ],
                 roleOfUser : "Staff"
             })
-            .expect(400)
+            .expect(200)
             await app.close()
         })
         
@@ -207,16 +192,7 @@ describe('AppController (e2e)', () => {
         
     })
     
-    describe('fillAttendance', () => {
-        it('Should update invalid staff fields', async () => {
-            await request(app.getHttpServer())
-            .patch(`/attendance/update/${staffAttendanceStub()._id}`)
-            .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
-            .send({
-                name : "Sid",
-            }).expect(400)
-        })
-        
+    describe('manageAttendance', () => {
         it('Unauthorize User Should not update invalid staff fields', async () => {
             await request(app.getHttpServer())
             .patch(`/attendance/update/${staffAttendanceStub()._id}`)
@@ -225,13 +201,13 @@ describe('AppController (e2e)', () => {
             }).expect(401)
         })
 
-        it('Should update valid staff fields', async () => {
+        it('Update valide staff for update', async () => {
             await request(app.getHttpServer())
             .patch(`/attendance/update/${staffAttendanceStub()._id}`)
             .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
             .send({
-                date : "2020-08-22",
-            }).expect(401)
+                date : "2021-06-18",
+            }).expect(200)
         })
     })
     

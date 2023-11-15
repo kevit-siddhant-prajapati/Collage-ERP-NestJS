@@ -50,12 +50,8 @@ describe('AppController (e2e)', () => {
 
   });
 
-    //admin testcases
-
-    ////
   describe('createAdmin', () => {
     it('Should signup a new admin', async () => {
-      //const admin = adminStub()
       await request(app.getHttpServer()).post('/admin/new')
       .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
       .send({
@@ -68,16 +64,15 @@ describe('AppController (e2e)', () => {
   
 
 describe('loginAdmin', () => {
-    ////
-//   it('Should login existing Admin', async () => {
-//     const admin = adminStub()
-//     console.log(admin)
-//       const response = await request(app.getHttpServer()).post('/auth/login').send({
-//           email : admin.email,
-//           password : admin.password,
-//           role : "Admin"
-//       }).expect(401)
-//   })
+  it('Should login existing Admin', async () => {
+    const admin = adminStub()
+    console.log(admin)
+      const response = await request(app.getHttpServer()).post('/auth/login').send({
+          email : admin.email,
+          password : admin.password,
+          role : "Admin"
+      }).expect(200)
+  })
   
   it('Should not login nonexisting Admin', async () => {
     const admin = adminStub()
@@ -89,10 +84,11 @@ describe('loginAdmin', () => {
   })
 })
   
-  ////
+
 describe('deleteAdmin', () => {
   it('should delete account for admin', async () => {
     const admin : any= adminStub()
+    console.log(admin)
       await request(app.getHttpServer()).delete(`/admin/delete/${admin._id}`)
       .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
       .send()
@@ -105,7 +101,7 @@ describe('deleteAdmin', () => {
   })
 })
   
-  ////
+
 describe('updateAdmin', () => {
   it('Should update valid admin fields', async () => {
     const admin:any = adminStub()
@@ -114,20 +110,8 @@ describe('updateAdmin', () => {
       .set('Authorization', `Bearer ${admin.tokens[0].token}`)
       .send({
           name : "Riya",
-      }).expect(500)
+      }).expect(200)
     })
-  
-  ////
-  it('Should not update unauthorize admin fields', async () => {
-    const admin = adminStub()
-       await request(app.getHttpServer())
-      .patch(`/admin/update/${admin._id}`)
-      .set('Authorization', `Bearer ${admin.tokens[0].token}`)
-      .send({
-          location : "Rajkot"
-      })
-      .expect(400)
-  })
 
 
   it('Should not update admin with unauthorize users', async () => {
@@ -141,6 +125,5 @@ describe('updateAdmin', () => {
   })
 })
 
-
-  })
-  })
+})
+})

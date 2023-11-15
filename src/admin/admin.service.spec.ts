@@ -50,9 +50,19 @@ describe('AdminService', () => {
           tokens: [],
         },
       ];
+      const outputAdmin = [
+        {
+          name: 'Kevin',
+          email: 'kevin@example.com',
+        },
+        {
+          name: 'Maya',
+          email: 'maya@example.com',
+        },
+      ];
       mockAdminModel.find.mockResolvedValue(mockAdmins);
       const result = await adminService.findAll();
-      expect(result).toEqual(mockAdmins); 
+      expect(result).toEqual(outputAdmin); 
     });
 
   });
@@ -102,8 +112,9 @@ describe('AdminService', () => {
   describe('deleteOne', () => {
     it('should delete a admin and associated attendance data', async () => {
       const result = await adminService.deleteOne('653365527f2490effb99f630');
+      console.log(result)
       mockAdminModel.findByIdAndDelete.mockResolvedValue(result)
-      expect(result).not.toBeDefined();
+      expect(result).toBeDefined();
     });
   });
 

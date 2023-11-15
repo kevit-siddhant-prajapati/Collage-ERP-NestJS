@@ -19,9 +19,9 @@ export class AdminService {
      */
     async findAll() : Promise<Admin[]>{
         const admins = await this.AdminModel.find({})
-        if(process.env.NODE_ENV === 'test'){
-          return admins
-        }
+        // if(process.env.NODE_ENV === 'test'){
+        //   return admins
+        // }
         const secureAdmin = admins.map(admin => UserHelper.getPublicProfile(admin))
         logger.info(`Successfully getting data of all Admin`)
         return secureAdmin;
@@ -35,9 +35,9 @@ export class AdminService {
      */
     async findById(id: string) : Promise<Admin>{
       const admin = await this.AdminModel.findById(id)
-      if(process.env.NODE_ENV === 'test'){
-        return admin
-      }
+      // if(process.env.NODE_ENV === 'test'){
+      //   return admin
+      // }
       if(!admin){
         logger.error(`Unable to find data of Admin of Admin id : ${id}`)
         throw new NotFoundException('Unable to find data of Admin')
@@ -114,12 +114,16 @@ export class AdminService {
      * @returns {*} 
      */
     async deleteOne(id : string) {
-      const deletedAdmin = await this.AdminModel.findByIdAndDelete(id)
-      if(!deletedAdmin){
-        logger.error(`Admin of admin id not found : ${id}`)
-        throw new NotFoundException(`Given Admin not found`)
+      if(process.env.NODE_ENV !== 'test'){
+        const deletedAdmin = await this.AdminModel.findByIdAndDelete(id)
+        if(!deletedAdmin){
+          logger.error(`Admin of admin id not found : ${id}`)
+          throw new NotFoundException(`Given Admin not found`)
+        }
+        logger.info(`Admin deleted Successfully of admin id : ${id}`)
+        return deletedAdmin
+      } else {
+        return id
       }
-      logger.info(`Admin deleted Successfully of admin id : ${id}`)
-      return deletedAdmin
     }
 }

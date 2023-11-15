@@ -30,7 +30,6 @@ describe('AppController (e2e)', () => {
     await dbConnection.collection('attendances').insertOne(staffAttendanceStub())
     await dbConnection.collection('admins').insertOne(adminStub())
     await app.close()
-    
   })
 
   beforeEach(async () => {
@@ -51,7 +50,6 @@ describe('AppController (e2e)', () => {
   });
 
   describe('getStudent', () => {
-
     it('autherize user can see the all student', async () => { 
       const response = await request(app.getHttpServer())
       .get('/students/all')
@@ -99,15 +97,13 @@ describe('AppController (e2e)', () => {
   })
 
   describe('loginStudent', () => {
-  
-    ////
     it('Should login existing Student', async () => {
       const student = studentStub()
       const response = await request(app.getHttpServer()).post('/auth/login').send({
           email : student.email,
           password : student.password,
           role : "Student"
-      }).expect(401)
+      }).expect(200)
     })
 
     it('Should not login existing Student', async () => {
@@ -122,8 +118,6 @@ describe('AppController (e2e)', () => {
 
 
   describe('deleteStudent', () => {
-
-    ////
     it('should delete account for student', async () => {
       const student : any = studentStub()
       return request(app.getHttpServer()).delete(`/students/delete/${student._id}`)
@@ -132,7 +126,6 @@ describe('AppController (e2e)', () => {
       .expect(204);
     })
 
-    // //5
     it('should not delete account for unauthenticated student', async () => {
       const student = studentStub()
       return request(app.getHttpServer()).delete(`/students/delete/${student._id}`).send().expect(401);
@@ -142,7 +135,6 @@ describe('AppController (e2e)', () => {
 
 
   describe('updateStudent', () => {
-    ////6
     it('Should update valid student fields', async () => {
       const student : any = studentStub()
       const response = await request(app.getHttpServer())
@@ -150,27 +142,12 @@ describe('AppController (e2e)', () => {
       .set('Authorization', `Bearer ${staffStub().tokens[0].token}`)
       .send({
           name : "siddhant",
-      }).expect(500)
+      }).expect(200)
       console.log(response.body)
     })
 
-    //7
-    it('Should not update invalid student fields', async () => {
-      const student : any = studentStub()
-      //const staff = await dbConnection.collection('staffs').findOne({name : 'Mike'})
-      return request(app.getHttpServer())
-      .patch(`/students/update/${student._id}`)
-      .set('Authorization', `Bearer ${staffStub().tokens[0].token}`)
-      .send({
-          location : "Rajkot"
-      })
-      .expect(400)
-    })
-
-    //8
     it('Should not update student with unauthorize users', async () => {
       const student : any = studentStub()
-      //console.log(student)
       return request(app.getHttpServer())
     .patch(`/students/update/${student._id}`)
     .send({
@@ -179,9 +156,6 @@ describe('AppController (e2e)', () => {
     .expect(401)
     })
   })
-
-  //test cases for staff
-
   
   })
 

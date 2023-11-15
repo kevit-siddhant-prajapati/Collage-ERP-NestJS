@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StudentService } from './student.service';
 import { Student } from './schemas/student.schema';
+import { CreateStudentDto } from './dto/create-student.dto';
+import { UpdateStudentDto } from './dto/update-student.dto';
 
 const mockStudentModel = {
   find: jest.fn(),
@@ -65,9 +67,29 @@ describe('StudentService', () => {
           tokens: [],
         },
       ];
+      const outputStudent = [
+        {
+          name: 'Kevin',
+          email: 'kevin@example.com',
+          currentSem: 1,
+          phoneNumber: '8864000809',
+          batch: 2020,
+          department: 'CE',
+          attendance: 216
+        },
+        {
+          name: 'Maya',
+          email: 'maya@example.com',
+          currentSem: 1,
+          phoneNumber: '8964009809',
+          batch: 2019,
+          department: 'ME',
+          attendance: 213
+        }
+      ]
       mockStudentModel.find.mockResolvedValue(mockStudents);
       const result = await studentService.findAll();
-      expect(result).toEqual(mockStudents); 
+      expect(result).toEqual(outputStudent); 
     });
 
   });
@@ -86,26 +108,37 @@ describe('StudentService', () => {
           attendance: 216,
           tokens : []
       };
+      const outputStudent = {
+        name: 'Kevin',
+        email: 'kevin@example.com',
+        currentSem: 1,
+        phoneNumber: '8864000809',
+        batch: 2020,
+        department: 'CE',
+        attendance: 216
+      }
         mockStudentModel.findById.mockResolvedValue(mockStudent);
         const result = await studentService.findById('653365527f2450effb99f630');
-        expect(result).toEqual(mockStudent);
+        expect(result).toEqual(outputStudent);
       });
 
     })
 
     describe('createOne', () => {
       it('should create a new student and return it', async () => {
-        const mockStudent: Student = await studentService.createOne({
-          name : "Mike",
-          email : "mike@example.com",
-          password : "Mike@1234",
-          phoneNumber : '1234567890',
-          department : "CE",
-          batch : 2020,
-          currentSem : 1,
-          attendance : 120,
-          tokens : []
-      });
+        const mockStudent : CreateStudentDto = {
+          name: "Mike",
+          email: "mike@example.com",
+          password: "Mike@1234",
+          phoneNumber: '1234567890',
+          department: "CE",
+          batch: 2020,
+          currentSem: 1,
+          attendance: 120,
+          _id: '1234567890112',
+          tokens: []
+        };
+      const result = await studentService.createOne(mockStudent);
       mockStudentModel.create.mockResolvedValue(mockStudent);
       expect(mockStudent).toBeDefined();
       });
@@ -113,7 +146,7 @@ describe('StudentService', () => {
 
     describe('updateOne', () => {
       it('should update an existing student and return the updated data', async () => {
-        const result = await studentService.updateOne('653365527f2490effb99f630', { 
+        const mockStudent = { 
           name : "Lina",
           email : "lina@example.com",
           password : "Lina@1234",
@@ -123,8 +156,9 @@ describe('StudentService', () => {
           currentSem : 1,
           attendance : 120,
           tokens : []
-         });
-         mockStudentModel.findByIdAndUpdate.mockResolvedValue(result);
+         };
+         const result = await studentService.updateOne('653365527f2490effb99f630', mockStudent);
+         mockStudentModel.findByIdAndUpdate.mockResolvedValue(mockStudent);
         expect(result).toBeDefined();
       });
     })

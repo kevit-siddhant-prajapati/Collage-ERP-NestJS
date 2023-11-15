@@ -85,6 +85,7 @@ describe('AuthService', () => {
       }
       mockAdminModel.findOne.mockResolvedValue(adminAuth)
       const result = await authService.loginAdmin(adminAuth)
+      console.log(result)
       expect(adminAuth).toBe(result)
     })
   })

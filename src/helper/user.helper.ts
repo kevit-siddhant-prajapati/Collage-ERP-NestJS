@@ -14,15 +14,21 @@ export class UserHelper{
  * @returns {*} 
  */
     static getPublicProfile(user : Staff | Student | Admin | any){
-        if(process.env.NODE_ENV !== 'test'){
+        //if(process.env.NODE_ENV !== 'test'){
             let newUser = ({...user}._doc)
-            delete newUser["password"]
-            delete newUser["tokens"]
-            delete newUser["createdAt"]
-            delete newUser["updatedAt"]
-            delete newUser["__v"]
-            return user
-        }
+            try {
+                delete newUser["password"]
+                delete newUser["tokens"]
+                delete newUser["createdAt"]
+                delete newUser["updatedAt"]
+                delete newUser["__v"]
+                return user
+            }catch(e){
+                delete user['password']
+                delete user['tokens']
+                return user
+            }
+       // }
     }
 /**
  * @description : use for authenticate  user using email and password
@@ -68,10 +74,10 @@ export class UserHelper{
      * @returns {*} 
      */
     static async convertToHash(user){
-        if(process.env.NODE_ENV !== 'test'){
+        //if(process.env.NODE_ENV !== 'test'){
             const newPassword:any = await bcrypt.hash(user.password, 8); //generate hash password from student's password 
             user.password = newPassword;
             return user
-        }
+        //}
     }
 }

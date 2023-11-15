@@ -11,7 +11,7 @@ export class CreateStaffDto {
 
     @IsOptional()
     @IsStringOrUndefined()
-    _id : string;
+    _id : string | undefined;
     @IsString()
     readonly name :string
 

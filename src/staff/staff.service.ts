@@ -22,9 +22,6 @@ export class StaffService {
  */
     async findAll() : Promise<Staff[]>{
         const staffs = await this.StaffModel.find({})
-        if(process.env.NODE_ENV === 'test'){
-          return staffs
-        }
         const secureStaff = staffs.map(staff => UserHelper.getPublicProfile(staff))
         logger.info(`Successfully getting data of all staff`)
         return secureStaff;
@@ -39,9 +36,6 @@ export class StaffService {
      */
     async findById(id: string) : Promise<Staff>{
       const staff = await this.StaffModel.findById(id)
-      if(process.env.NODE_ENV === 'test'){
-        return staff
-      }
       if(!staff){
         logger.error(`Unable to find data of Staff id : ${id}`)
         throw new NotFoundException('Unable to find data of given staff')

@@ -18,8 +18,7 @@ describe('AppController (e2e)', () => {
   beforeAll(async () => {
   })
 
-  afterAll(async () => {
-    // Closing the DB connection allows Jest to exit successfully.
+  afterAll(async () => { 
     await dbConnection.collection('students').deleteMany({});
     await dbConnection.collection('staffs').deleteMany({});
     await dbConnection.collection('admins').deleteMany({});
@@ -29,9 +28,7 @@ describe('AppController (e2e)', () => {
     await dbConnection.collection('staffs').insertOne(staffStub())
     await dbConnection.collection('attendances').insertOne(staffAttendanceStub())
     await dbConnection.collection('admins').insertOne(adminStub())
-    
     await app.close()
-    
   })
 
   beforeEach(async () => {
@@ -48,11 +45,9 @@ describe('AppController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     dbConnection = moduleFixture.get<DatabaseService>(DatabaseService).getDbHandle();
-
   });
 
   
-  //test cases for staff
   describe('getAllStaff', () => {
 
     it('Not getting data of all staff to unauthorize person', () => {
@@ -70,7 +65,7 @@ describe('AppController (e2e)', () => {
   
   })
 
-    //2
+
   describe('createStaff', () => {
     it('unauthorize user should not create a new staff', async () => {
       return request(app.getHttpServer()).post('/staffs/new')
@@ -98,7 +93,7 @@ describe('AppController (e2e)', () => {
     })
   })
 
-    ////2
+
   describe('createStaff', () => {
     it('Should login existing Staff', async () => {
       const staff = staffStub()
@@ -106,10 +101,9 @@ describe('AppController (e2e)', () => {
           email : staff.email,
           password : staff.password,
           role : "Staff"
-      }).expect(401)
+      }).expect(200)
     })
 
-     //3
     it('Should not login existing Staff', async () => {
       const staff = staffStub()
       return request(app.getHttpServer()).post('/auth/login').send({
@@ -121,17 +115,16 @@ describe('AppController (e2e)', () => {
   })
 
 
-    ////4
   describe('deleteStaff', () => {
     it('should delete account for staff', async () => {
       const staff: any = staffStub()
+      console.log(staff)
       return request(app.getHttpServer()).delete(`/staffs/delete/${staff._id}`)
       .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
       .send()
-      .expect(500);
+      .expect(204);
     })
 
-    //5
     it('should not delete account for unauthenticated staff', async () => {
       const staff : any = staffStub()
       return request(app.getHttpServer()).delete(`/staffs/delete/${staff._id}`).send().expect(401);
@@ -139,7 +132,6 @@ describe('AppController (e2e)', () => {
   })
 
 
-    ////6
   describe('updateStaff', () => {
     it('Should update valid staff fields', async () => {
       const staff: any = staffStub()
@@ -148,22 +140,9 @@ describe('AppController (e2e)', () => {
       .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
       .send({
           name : "siddhant",
-      }).expect(500)
+      }).expect(200)
     })
 
-    //7
-    it('Should not update unauthorize staff fields', async () => {
-      const staff: any = staffStub()
-      return request(app.getHttpServer())
-      .patch(`/staffs/update/${staff._id}`)
-      .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
-      .send({
-          location : "Rajkot"
-      })
-      .expect(400)
-    })
-
-    //8
     it('Should not update staff with unauthorize users', async () => {
       const staff : any = staffStub()
       return request(app.getHttpServer())

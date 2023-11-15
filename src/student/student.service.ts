@@ -22,10 +22,6 @@ export class StudentService {
      */
     async findAll() : Promise<Student[]>{
         const students = await this.StudentModel.find({})
-        //const publicStudent = new UserMiddleware()
-        if(process.env.NODE_ENV === 'test'){
-          return students
-        }
         const secureStudents = students.map(student => UserHelper.getPublicProfile(student))
         logger.info(`successfully print all data of student`)
         return secureStudents;
@@ -39,9 +35,6 @@ export class StudentService {
      */
     async findById(id: string) : Promise<Student>{
       const student = await this.StudentModel.findById(id)
-      if(process.env.NODE_ENV === 'test'){
-        return student
-      }
       UserHelper.getPublicProfile(student)
       logger.info(`successfully find Student of _id: ${id}`)
       return student;

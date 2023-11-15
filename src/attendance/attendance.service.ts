@@ -57,10 +57,10 @@ export class AttendanceService {
                 //create new attendance document for student that are not present in array
                 const newAttendance = await this.AttendanceModel.create(attendanceDetail)
                 if(!newAttendance){
-                    logger.error(`Attendance of Student id: ${student._id} is created as absent`)
+                    logger.error(`Attendance of Student id: ${notAttendStudent._id} is created as absent`)
                     throw new BadRequestException(`Unable to fill student attendance`)
                 }
-                logger.info(`Attendance of student of Id : ${student._id} filled`)
+                logger.info(`Attendance of student of Id : ${notAttendStudent._id} filled`)
                 await student.save();
             }
         }
@@ -142,6 +142,7 @@ export class AttendanceService {
                 logger.error('Invalid attendance update')
                 throw new BadRequestException('not valid Update')
             }
+         
             const updateAttendance = await this.AttendanceModel.findByIdAndUpdate(id, attendanceData)
             if(!updateAttendance){
                 logger.error('Given attendance not found')

@@ -11,7 +11,7 @@ export class UpdateStudentDto {
 
     @IsOptional()
     @IsStringOrUndefined()
-    _id : string;
+    _id : string | undefined;
     @IsString()
     readonly name :string
 
@@ -39,6 +39,7 @@ export class UpdateStudentDto {
     @IsString()
     readonly department : string
 
+    @IsOptional()
     @IsInt()
     readonly attendance : number
 

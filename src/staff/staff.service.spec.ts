@@ -61,9 +61,25 @@ describe('StaffService', () => {
           tokens: [],
         },
       ];
+      const outputStaff = [
+        {
+          name: 'Kevin',
+          email: 'kevin@example.com',
+          phoneNumber: '8864000809',
+          department: 'CE',
+          attendance: 216,
+        },
+        {
+          name: 'Maya',
+          email: 'maya@example.com',
+          phoneNumber: '8964009809',
+          department: 'ME',
+          attendance: 213,
+        },
+      ]
       mockStaffModel.find.mockResolvedValue(mockStaffs);
       const result = await staffService.findAll();
-      expect(result).toEqual(mockStaffs); 
+      expect(result).toEqual(outputStaff); 
     });
 
   });
@@ -80,9 +96,16 @@ describe('StaffService', () => {
           attendance: 216,
           tokens : []
       };
+      const outputStaff = {
+        name: "Kevin",
+          email: "kevin@example.com",
+          phoneNumber: '8864000809',
+          department: 'CE',
+          attendance: 216,
+      }
         mockStaffModel.findById.mockResolvedValue(mockStaff);
         const result = await staffService.findById('653365527f2450effb99f630');
-        expect(result).toEqual(mockStaff);
+        expect(result).toEqual(outputStaff);
       });
     })
 
