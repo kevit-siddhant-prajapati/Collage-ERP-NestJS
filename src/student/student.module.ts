@@ -5,10 +5,11 @@ import { StudentController } from './student.controller';
 import { StudentService } from './student.service';
 import { JwtService } from '@nestjs/jwt';
 import { AttendanceSchema } from '../attendance/schemas/attendance.schema';
-import { StaffAuthMiddleware, StudentAuthMiddleware } from '../auth/auth.middleware';
+import { AdminAuthMiddleware, StaffAuthMiddleware, StudentAuthMiddleware } from '../auth/auth.middleware';
 import { StaffSchema } from '../staff/schemas/staff.schema';
 import { DatabaseModule } from '../database/database.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AdminSchema } from '../admin/schemas/admin.schema';
 
 /**
  * @description : Student module import different model sd well as connect student controller and service
@@ -24,6 +25,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             { name: 'Attendance', schema : AttendanceSchema},
             { name: 'Student', schema : StudentSchema},
             { name: 'Staff', schema : StaffSchema},
+            { name: 'Admin', schema : AdminSchema}
         ]),
     ],
     controllers : [StudentController],
@@ -42,12 +44,18 @@ export class StudentModule {
             .forRoutes(
                 { path: 'students/all', method : RequestMethod.GET}
             )
+
         consumer
             .apply(StaffAuthMiddleware)
             .forRoutes(
+                { path: 'students/new', method : RequestMethod.POST},
+            )
+        
+        consumer
+            .apply(AdminAuthMiddleware)
+            .forRoutes(
                 { path: 'students/update/:id', method : RequestMethod.PATCH},
                 { path: 'students/delete/:id', method : RequestMethod.DELETE},
-                { path: 'students/new', method : RequestMethod.POST},
                 { path: 'students/get:id', method: RequestMethod.GET},
             )
     }

@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsIn, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsInt, IsIn, IsOptional, IsEnum, IsEmail, IsPhoneNumber } from 'class-validator';
 import { IsStringOrUndefined } from '../../student/pipe/IsStringOrUndefined.pipe';
 
 /**
@@ -9,14 +9,14 @@ import { IsStringOrUndefined } from '../../student/pipe/IsStringOrUndefined.pipe
  */
 export class UpdateStaffDto {
 
-    @IsOptional()
-    @IsStringOrUndefined()
-    _id : string;
     @IsString()
+    @IsOptional()
+    _id : string;
     readonly name :string
 
     @IsOptional()
     @IsString()
+    @IsEmail()
     readonly email:string
 
     @IsOptional()
@@ -25,8 +25,8 @@ export class UpdateStaffDto {
 
     @IsOptional()
     @IsString()
+    @IsPhoneNumber()
     readonly phoneNumber : string
-
 
     @IsOptional()
     @IsString()

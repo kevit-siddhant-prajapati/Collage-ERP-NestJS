@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, HttpCode, UsePipes } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { Admin } from './schemas/admin.schema';
 import { CreateAdminDto } from './dto/crete-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { ParseObjectIdPipe } from 'src/student/pipe/ParseObjectId.pipe';
+import { ParseObjectIdPipe } from '../student/pipe/ParseObjectId.pipe';
+import { AdminValidationPipe } from './pipe/admin-validation.pipe';
 
 @Controller('admin')
 export class AdminController {
@@ -35,6 +36,7 @@ export class AdminController {
      * @param {CreateAdminDto} input
      * @returns {*}  {Promise<Admin>}
      */
+    @UsePipes(AdminValidationPipe)
     @Post('new')
     async addAdmin(@Body() input: CreateAdminDto) : Promise<Admin> {
         return this.adminService.createOne(input)
@@ -47,6 +49,7 @@ export class AdminController {
      * @param {string} id
      * @returns {*}  {Promise<Admin>}
      */
+    @UsePipes(AdminValidationPipe)
     @Patch('/update/:id')
     async updateAdmin(
         @Body() admin: UpdateAdminDto,

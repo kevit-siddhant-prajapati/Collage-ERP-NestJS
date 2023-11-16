@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsIn, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsInt, IsIn, IsOptional, IsEnum, IsEmail, IsPhoneNumber } from 'class-validator';
 import { IsStringOrUndefined } from '../../student/pipe/IsStringOrUndefined.pipe';
 
 /**
@@ -10,18 +10,19 @@ import { IsStringOrUndefined } from '../../student/pipe/IsStringOrUndefined.pipe
 export class CreateStaffDto {
 
     @IsOptional()
-    @IsStringOrUndefined()
     _id : string | undefined;
     @IsString()
     readonly name :string
 
     @IsString()
+    @IsEmail()
     readonly email:string
 
     @IsString()
     readonly password:string
 
     @IsString()
+    @IsPhoneNumber()
     readonly phoneNumber : string
 
     @IsString()

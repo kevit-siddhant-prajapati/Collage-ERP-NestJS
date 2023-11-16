@@ -9,7 +9,7 @@ import { IsStringOrUndefined } from '../../student/pipe/IsStringOrUndefined.pipe
 export class CreateAdminDto {
 
     @IsOptional()
-    @IsStringOrUndefined()
+    //@IsStringOrUndefined()
     _id : string | undefined;
     @IsString()
     readonly name :string

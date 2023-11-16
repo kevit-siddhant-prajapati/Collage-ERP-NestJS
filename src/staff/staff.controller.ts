@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Patch, Delete, Body, HttpCode, Param, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, HttpCode, Param, UseInterceptors, UsePipes } from '@nestjs/common';
 import { StaffService } from './staff.service';
 import { Staff } from './schemas/staff.schema';
 import { CreateStaffDto } from './dto/crete-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { ParseObjectIdPipe } from '../student/pipe/ParseObjectId.pipe';
+import { StaffValidationPipe } from './pipe/staff-validation.pipe';
 
 
 @Controller('staffs')
@@ -38,6 +39,7 @@ export class StaffController {
      * @returns {*}  {Promise<Staff>}
      */
     @Post('new')
+    @UsePipes(StaffValidationPipe)
     async addStaff(@Body() input: CreateStaffDto) : Promise<Staff> {
         return this.staffService.createOne(input)
     }
@@ -50,6 +52,7 @@ export class StaffController {
      * @returns {*}  {Promise<Staff>}
      */
     @Patch('/update/:id')
+    @UsePipes(StaffValidationPipe)
     async updateStaff(
         @Body() staff: UpdateStaffDto,
         @Param('id', new ParseObjectIdPipe()) id: string
