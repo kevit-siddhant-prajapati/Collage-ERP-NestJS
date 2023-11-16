@@ -3,6 +3,7 @@ import { AdminService } from './admin.service';
 import { Admin } from './schemas/admin.schema';
 import { CreateAdminDto } from './dto/crete-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
+import { ParseObjectIdPipe } from 'src/student/pipe/ParseObjectId.pipe';
 
 @Controller('admin')
 export class AdminController {
@@ -24,7 +25,7 @@ export class AdminController {
      * @returns {*}  {Promise<Admin>}
      */
     @Get('/:id')
-    async getAdminById(@Param('id') id) : Promise<Admin> {
+    async getAdminById(@Param('id', new ParseObjectIdPipe()) id) : Promise<Admin> {
         return this.adminService.findById(id)
     }
 
@@ -49,7 +50,7 @@ export class AdminController {
     @Patch('/update/:id')
     async updateAdmin(
         @Body() admin: UpdateAdminDto,
-        @Param('id') id: string
+        @Param('id', new ParseObjectIdPipe()) id: string
         ) : Promise<Admin> {
         return this.adminService.updateOne(id, admin)
     }
@@ -63,7 +64,7 @@ export class AdminController {
     @Delete('/delete/:id')
     @HttpCode(204)
     async deleteAdmin(
-        @Param('id') id: string
+        @Param('id', new ParseObjectIdPipe()) id: string
     ) {
         return this.adminService.deleteOne(id)
     }

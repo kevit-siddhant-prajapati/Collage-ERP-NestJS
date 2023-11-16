@@ -11,7 +11,7 @@ export class UpdateStaffDto {
 
     @IsOptional()
     @IsStringOrUndefined()
-    _id : string | undefined;
+    _id : string;
     @IsString()
     readonly name :string
 

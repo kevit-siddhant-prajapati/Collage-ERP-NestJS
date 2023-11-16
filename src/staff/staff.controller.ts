@@ -3,6 +3,7 @@ import { StaffService } from './staff.service';
 import { Staff } from './schemas/staff.schema';
 import { CreateStaffDto } from './dto/crete-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
+import { ParseObjectIdPipe } from '../student/pipe/ParseObjectId.pipe';
 
 
 @Controller('staffs')
@@ -26,7 +27,7 @@ export class StaffController {
      * @returns {*}  {Promise<Staff>}
      */
     @Get('get/:id')
-    async getStaffById(@Param('id') id) : Promise<Staff> {
+    async getStaffById(@Param('id', new ParseObjectIdPipe()) id: string) : Promise<Staff> {
         return this.staffService.findById(id)
     }
 
@@ -51,7 +52,7 @@ export class StaffController {
     @Patch('/update/:id')
     async updateStaff(
         @Body() staff: UpdateStaffDto,
-        @Param('id') id: string
+        @Param('id', new ParseObjectIdPipe()) id: string
         ) : Promise<Staff> {
         return this.staffService.updateOne(id, staff)
     }
@@ -65,7 +66,7 @@ export class StaffController {
     @Delete('/delete/:id')
     @HttpCode(204)
     async deleteStaff(
-        @Param('id') id: string
+        @Param('id', new ParseObjectIdPipe()) id: string
     ) {
         return this.staffService.deleteOne(id)
     }

@@ -3,11 +3,10 @@ import { StudentService } from './student.service';
 import { Student } from './schemas/student.schema';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { StudentAuthGuard } from './studentAuth.guard';
+import { ParseObjectIdPipe } from './pipe/ParseObjectId.pipe';
 
 
 @Controller('students')
-//@UseGuards(StudentAuthGuard) :- generated unexpected result
 export class StudentController {
   
     constructor(private studentService : StudentService){}
@@ -30,7 +29,7 @@ export class StudentController {
      * @returns {*}  {Promise<Student>}
      */
     @Get('get/:id')
-    async getStudentById(@Param('id') id) : Promise<Student> {
+    async getStudentById(@Param('id', new ParseObjectIdPipe()) id:string) : Promise<Student> {
         return this.studentService.findById(id)
     }
 
@@ -55,7 +54,7 @@ export class StudentController {
     @Patch('/update/:id')
     async updateStudent(
         @Body() student: UpdateStudentDto,
-        @Param('id') id: string
+        @Param('id', new ParseObjectIdPipe()) id: string
         ) : Promise<Student> {
         return this.studentService.updateOne(id, student)
     }
@@ -69,7 +68,7 @@ export class StudentController {
 @Delete('/delete/:id')
     @HttpCode(204)
     async deleteStudent(
-        @Param('id') id: string
+        @Param('id', new ParseObjectIdPipe()) id: string
     ) {
         return this.studentService.deleteOne(id)
     }
