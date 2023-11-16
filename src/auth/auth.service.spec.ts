@@ -59,7 +59,7 @@ describe('AuthService', () => {
       }
       mockStudentModel.findOne.mockResolvedValue(studentAuth)
       const result = await authService.loginStudent(studentAuth)
-      expect(studentAuth).toBe(result)
+      expect(studentAuth).toEqual(result)
     })
   })
 
@@ -85,7 +85,6 @@ describe('AuthService', () => {
       }
       mockAdminModel.findOne.mockResolvedValue(adminAuth)
       const result = await authService.loginAdmin(adminAuth)
-      console.log(result)
       expect(adminAuth).toBe(result)
     })
   })

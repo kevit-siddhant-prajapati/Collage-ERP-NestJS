@@ -120,7 +120,6 @@ describe('AppController (e2e)', () => {
 
     describe('updateAttendanceStudent', () => {
         it('Should update valid student fields', async () => {
-            console.log(studentAttendanceStub())
             await request(app.getHttpServer())
             .patch(`/attendance/update/${studentAttendanceStub()._id}`)
             .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
@@ -202,12 +201,13 @@ describe('AppController (e2e)', () => {
         })
 
         it('Update valide staff for update', async () => {
-            await request(app.getHttpServer())
+            const result = await request(app.getHttpServer())
             .patch(`/attendance/update/${staffAttendanceStub()._id}`)
             .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
             .send({
                 date : "2021-06-18",
             }).expect(200)
+            console.log(result)
         })
     })
     

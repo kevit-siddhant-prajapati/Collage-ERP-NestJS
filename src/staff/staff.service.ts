@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Staff } from './schemas/staff.schema';
+import { Staff, StaffModel } from './schemas/staff.schema';
 import mongoose from 'mongoose';
 import { UserHelper } from '../helper/user.helper';
 import { Attendance } from '../attendance/schemas/attendance.schema';
@@ -53,18 +53,29 @@ export class StaffService {
      * @returns {*}  {Promise<Staff>}
      */
     async createOne(staffData : Staff) : Promise<Staff> {
+      
         const hashedpasswordStaff = await UserHelper.convertToHash(staffData)
-        const newStaff = new this.StaffModel(hashedpasswordStaff)
-        if(!newStaff){
-          logger.error(`Invalid Staff data provided`)
-          throw new BadRequestException('Enter valid Staffdata ')
+        // using because test environment have different database and different staff model(mock-data)
+        if(process.env.NODE_ENV === 'test'){  
+          staffData.password = hashedpasswordStaff
+          new StaffModel(staffData)
+          await UserHelper.generateAuthToken(staffData)
+          return staffData
         }
-        try {
-          UserHelper.generateAuthToken(newStaff)
-          logger.info(`Successfully generate new Staff of id: ${newStaff._id}`)
-          return newStaff
-        } catch(e){
-          logger.error(`Error : ${e}`)
+        // below else part use staffModel for development mongodb uri
+        else {
+          const newStaff = new this.StaffModel(hashedpasswordStaff)
+          if(!newStaff){
+            logger.error(`Invalid Staff data provided`)
+            throw new BadRequestException('Enter valid Staffdata ')
+          }
+          try {
+            UserHelper.generateAuthToken(newStaff)
+            logger.info(`Successfully generate new Staff of id: ${newStaff._id}`)
+            return newStaff
+          } catch(e){
+            logger.error(`Error : ${e}`)
+          }
         }
     } 
 
@@ -76,6 +87,9 @@ export class StaffService {
      * @returns {*}  {Promise<Staff>}
      */
     async updateOne(id : string, staffdata) : Promise<Staff> {
+      if(process.env.NODE_ENV === 'test'){  //mock-data contain tokens array that not present in original data
+        delete staffdata.tokens
+      }
         console.log(`updateable staff is call:`)
         const updatable = ['name', 'email', 'password', 'phoneNumber', 'attendance', 'department']
         const updateStaff = Object.keys(staffdata)

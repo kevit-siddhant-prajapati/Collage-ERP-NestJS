@@ -5,6 +5,7 @@ import { StudentModel } from '../student/schemas/student.schema';
 import { ManageAttendanceDto } from './dto/manage-attendance.dto';
 import { GetAttendanceDto } from './dto/get-attendance.dto';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
+import { ParseObjectIdPipe } from '../student/pipe/ParseObjectId.pipe';
 
 @Controller('attendance')
 export class AttendanceController {
@@ -40,7 +41,7 @@ export class AttendanceController {
      */
     @Patch('update/:id')
     async updateUserAttendance(
-        @Param('id') id: string,
+        @Param('id' , new ParseObjectIdPipe()) id: string,
         @Body() attendance : ManageAttendanceDto
     ){
         return this.attendanceService.manageAttendanceById(attendance, id)

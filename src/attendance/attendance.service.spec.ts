@@ -89,14 +89,22 @@ describe('AttendanceService', () => {
 
   describe('manageAttendanceById', () => {
     it('can update the available attendance', async () => {
-      const result : Attendance = await attendanceService.manageAttendanceById({
+      const mockAttendance = {
+        date : new Date('2020-06-22'),
+        status : true,
+        roleOfUser : 'Student',
+        userId : new ObjectId("653368ad805360f92d8cb99a")
+      }
+
+      mockAttendanceModel.findByIdAndUpdate.mockResolvedValue(mockAttendance)
+      const result = await attendanceService.manageAttendanceById({
         date : new Date('2020-06-22'),
         status : false,
         roleOfUser : 'Student',
         userId : new ObjectId("653368ad805360f92d8cb99a")
       }, '65336973805360f92d8cb9bb'); 
       mockAttendanceModel.findByIdAndUpdate.mockResolvedValue(result)
-      expect(result).toBeDefined();
+      expect(result).toEqual(mockAttendance);
     })
   })
 

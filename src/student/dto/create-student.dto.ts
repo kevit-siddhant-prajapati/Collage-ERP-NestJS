@@ -10,7 +10,6 @@ import { IsStringOrUndefined } from '../pipe/IsStringOrUndefined.pipe';
 export class CreateStudentDto {
 
     @IsOptional()
-    //@IsStringOrUndefined()
     _id : string;
     @IsString()
     readonly name :string

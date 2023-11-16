@@ -3,6 +3,7 @@ import { StudentService } from './student.service';
 import { Student } from './schemas/student.schema';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { UserHelper } from '../helper/user.helper';
 
 const mockStudentModel = {
   find: jest.fn(),
@@ -15,6 +16,11 @@ const mockStudentModel = {
 const mockAttendanceModel = {
   deleteMany: jest.fn(),
 };
+
+const mockLogger = {
+  error : jest.fn(),
+  info : jest.fn()
+}
 
 describe('StudentService', () => {
   let studentService: StudentService;
@@ -125,28 +131,8 @@ describe('StudentService', () => {
     })
 
     describe('createOne', () => {
-      it('should create a new student and return it', async () => {
-        const mockStudent : CreateStudentDto = {
-          name: "Mike",
-          email: "mike@example.com",
-          password: "Mike@1234",
-          phoneNumber: '1234567890',
-          department: "CE",
-          batch: 2020,
-          currentSem: 1,
-          attendance: 120,
-          _id: '1234567890112',
-          tokens: []
-        };
-      const result = await studentService.createOne(mockStudent);
-      mockStudentModel.create.mockResolvedValue(mockStudent);
-      expect(mockStudent).toBeDefined();
-      });
-    });
-
-    describe('updateOne', () => {
-      it('should update an existing student and return the updated data', async () => {
-        const mockStudent = { 
+      it('should create a new student', async () => {
+        const studentData = {
           name : "Lina",
           email : "lina@example.com",
           password : "Lina@1234",
@@ -156,18 +142,78 @@ describe('StudentService', () => {
           currentSem : 1,
           attendance : 120,
           tokens : []
+        };
+  
+        const hashedPasswordStudent = '$2b$08$36sq1MNRqpERM8IejEv9Be9qsNy9UtmqGr5ObMDTkBhb5VoldTtJW'; // replace with actual hashed password
+
+        jest.spyOn(UserHelper, 'convertToHash').mockResolvedValue(hashedPasswordStudent);
+  
+        const mockGenerateAuthToken = jest.spyOn(UserHelper, 'generateAuthToken').mockResolvedValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTQ5YmVkY2M2ZDUxYTYzY2FkMDAzNGYiLCJpYXQiOjE3MDAxMjA0NDgsImV4cCI6MTcwMDEyNDA0OH0.dGd_YBQbCG69lgMVnf-qXxk3yN_Y8hHr35uPwb6vclw');
+        
+        mockStudentModel.create.mockResolvedValue(studentData);
+  
+        const result = await studentService.createOne(studentData);
+
+        expect(result).toEqual(studentData);
+        expect(mockGenerateAuthToken).toHaveBeenCalled();
+    });
+  })
+
+    describe('updateOne', () => {
+      it('should update an existing student and return the updated data', async () => {
+        const mockStudent = { 
+          //value that to be update
+          name : "Mike",
+          email : "mike@example.com",
+          password : "Mike@1234",
+          phoneNumber : '1234567290',
+          department : "CE",
+          batch : 2020,
+          currentSem : 1,
+          attendance : 120,
+          _id : '653365527f2490effb99f630',
+          tokens : []
          };
-         const result = await studentService.updateOne('653365527f2490effb99f630', mockStudent);
-         mockStudentModel.findByIdAndUpdate.mockResolvedValue(mockStudent);
-        expect(result).toBeDefined();
+
+        const hashedPasswordStudent = '$2b$08$36sq1MNRqpERM8IejEv9Be9qsNy9UtmqGr5ObMDTkBhb5VoldTtJW'; // replace with actual hashed password
+
+        jest.spyOn(UserHelper, 'convertToHash').mockResolvedValue(hashedPasswordStudent);
+        
+        mockStudentModel.findByIdAndUpdate.mockResolvedValue(mockStudent)
+
+        const result = await studentService.updateOne('653365527f2490effb99f630', {
+          //original value(in mock-data)
+          attendance: 100,
+          name: 'Linda',
+          email: 'linda',
+          currentSem: 2,
+          password: 'Linda@123',
+          phoneNumber: '9087654321',
+          batch: 2021,
+          department: 'EC',
+          tokens: []
+        })
+
+        expect(result).toEqual(mockStudent);
       });
     })
 
   describe('deleteOne', () => {
     it('should delete a student and associated attendance data', async () => {
-      const result: any = await studentService.deleteOne('653365527f2490effb99f630');
-      mockStudentModel.findByIdAndDelete.mockResolvedValue(result)
-      mockAttendanceModel.deleteMany.mockResolvedValue(result)
+      const mockStudent = { 
+        name : "Mike",
+        email : "mike@example.com",
+        password : "Mike@1234",
+        phoneNumber : '1234567290',
+        department : "CE",
+        batch : 2020,
+        currentSem : 1,
+        attendance : 120,
+        _id : '653365527f2490effb99f630', 
+        tokens : []
+       };
+      mockStudentModel.findByIdAndDelete.mockResolvedValue(mockStudent)
+      const result = await studentService.deleteOne('653365527f2490effb99f630');
       expect(result).not.toBeDefined();
     });
   });

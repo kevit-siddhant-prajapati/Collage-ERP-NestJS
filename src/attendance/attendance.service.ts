@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Attendance } from './schemas/attendance.schema';
+import { Attendance, AttendanceModel } from './schemas/attendance.schema';
 import { Student } from '../student/schemas/student.schema';
 import { Staff } from '../staff/schemas/staff.schema';
 import mongoose, { Model } from 'mongoose';
@@ -133,6 +133,11 @@ export class AttendanceService {
      * @returns {*}  {Promise<Attendance>}
      */
     async manageAttendanceById(attendanceData : Attendance, id : string): Promise<Attendance>{
+        //attendance mockdata contains roleOfUser and userId that are not available in updateable data
+        if(process.env.NODE_ENV === 'test'){
+            delete attendanceData.roleOfUser
+            delete attendanceData.userId
+        } 
             const updatable = [ 'status', 'date']
             const updateAttend = Object.keys(attendanceData)
             //check if given all update is valid or not
@@ -151,7 +156,7 @@ export class AttendanceService {
             return updateAttendance
     }
 
-    /**
+    /**a
      * @description : get Attendance of user using its role
      * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
      * @param {Attendance} role

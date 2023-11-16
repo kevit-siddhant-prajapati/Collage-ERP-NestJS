@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StaffService } from './staff.service';
 import { Staff } from './schemas/staff.schema';
+import { UserHelper } from '../helper/user.helper';
 
 const mockStaffModel = {
   find: jest.fn(),
@@ -110,25 +111,8 @@ describe('StaffService', () => {
     })
 
     describe('createOne', () => {
-      it('should create a new staff and return it', async () => {
-        const mockStaff: Staff = await staffService.createOne({
-          name : "Mike",
-          email : "mike@example.com",
-          password : "Mike@1234",
-          phoneNumber : '1234567890',
-          department : "CE",
-          attendance : 120,
-          tokens : []
-      });
-
-      mockStaffModel.create.mockResolvedValue(mockStaff);
-      expect(mockStaff).toBeDefined();
-      });
-    });
-
-    describe('updateOne', () => {
-      it('should update an existing staff and return the updated data', async () => {
-        const result : Staff = await staffService.updateOne('653365527f2490effb99f630', { 
+      it('should create a new student', async () => {
+        const staffData = {
           name : "Lina",
           email : "lina@example.com",
           password : "Lina@1234",
@@ -136,17 +120,72 @@ describe('StaffService', () => {
           department : "CE",
           attendance : 120,
           tokens : []
-         });
-         mockStaffModel.findByIdAndUpdate.mockResolvedValue(result);
-        expect(result).toBeDefined();
+        };
+  
+        const hashedPasswordStaff = '$2b$08$36sq1MNRqpERM8IejEv9Be9qsNy9UtmqGr5ObMDTkBhb5VoldTtJW'; // replace with actual hashed password
+
+        jest.spyOn(UserHelper, 'convertToHash').mockResolvedValue(hashedPasswordStaff);
+  
+        const mockGenerateAuthToken = jest.spyOn(UserHelper, 'generateAuthToken').mockResolvedValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTQ5YmVkY2M2ZDUxYTYzY2FkMDAzNGYiLCJpYXQiOjE3MDAxMjA0NDgsImV4cCI6MTcwMDEyNDA0OH0.dGd_YBQbCG69lgMVnf-qXxk3yN_Y8hHr35uPwb6vclw');
+        
+        mockStaffModel.create.mockResolvedValue(staffData);
+  
+        const result = await staffService.createOne(staffData);
+
+        expect(result).toEqual(staffData);
+        expect(mockGenerateAuthToken).toHaveBeenCalled();
+    });
+  })
+
+    describe('updateOne', () => {
+      it('should update an existing student and return the updated data', async () => {
+        const mockStaff = { 
+          //value that to be update
+          name : "Mike",
+          email : "mike@example.com",
+          password : "Mike@1234",
+          phoneNumber : '1234567290',
+          department : "CE",
+          attendance : 120,
+          _id : '653365527f2490effb99f630',
+          tokens : []
+         };
+
+        const hashedPasswordStaff = '$2b$08$36sq1MNRqpERM8IejEv9Be9qsNy9UtmqGr5ObMDTkBhb5VoldTtJW'; // replace with actual hashed password
+
+        jest.spyOn(UserHelper, 'convertToHash').mockResolvedValue(hashedPasswordStaff);
+        
+        mockStaffModel.findByIdAndUpdate.mockResolvedValue(mockStaff)
+
+        const result = await staffService.updateOne('653365527f2490effb99f630', {
+          //original value(in mock-data)
+          attendance: 100,
+          name: 'Linda',
+          email: 'linda',
+          password: 'Linda@123',
+          phoneNumber: '9087654321',
+          department: 'EC',
+          tokens: []
+        })
+
+        expect(result).toEqual(mockStaff);
       });
     })
 
   describe('deleteOne', () => {
-    it('should delete a staff and associated attendance data', async () => {
+    it('should delete a student and associated attendance data', async () => {
+      const mockStaff = { 
+        name : "Mike",
+        email : "mike@example.com",
+        password : "Mike@1234",
+        phoneNumber : '1234567290',
+        department : "CE",
+        attendance : 120,
+        _id : '653365527f2490effb99f630', 
+        tokens : []
+       };
+      mockStaffModel.findByIdAndDelete.mockResolvedValue(mockStaff)
       const result = await staffService.deleteOne('653365527f2490effb99f630');
-      mockStaffModel.findByIdAndDelete.mockResolvedValue(result)
-      mockAttendanceModel.deleteMany.mockResolvedValue(result)
       expect(result).not.toBeDefined();
     });
   });

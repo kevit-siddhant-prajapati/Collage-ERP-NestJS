@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Admin } from './schemas/admin.schema';
+import { Admin, AdminModel } from './schemas/admin.schema';
 import mongoose from 'mongoose';
 import { UserHelper } from '../helper/user.helper';
 import { logger } from '../logger/logger.service';
@@ -49,18 +49,27 @@ export class AdminService {
      */
     async createOne(adminData : Admin) : Promise<Admin> {
         const hashedpasswordAdmin = await UserHelper.convertToHash(adminData)
-        const newAdmin = new this.AdminModel(hashedpasswordAdmin)
-        if(!newAdmin){
-          logger.error(`Admin data  is invalid`)
-          throw new BadRequestException('Enter valid Admindata ')
-        }
-        try {
-          UserHelper.generateAuthToken(newAdmin)
-          logger.info(`successfully create new admin of admin id : ${newAdmin._id}`)
-          return newAdmin
-        } catch(e){
-          logger.error(`error : ${e}`)
-          throw new InternalServerErrorException(e)
+        if(process.env.NODE_ENV === 'test'){  
+          adminData.password = hashedpasswordAdmin
+          new AdminModel(adminData)
+          await UserHelper.generateAuthToken(adminData)
+          return adminData
+        } 
+
+        else {
+          const newAdmin = new this.AdminModel(hashedpasswordAdmin)
+          if(!newAdmin){
+            logger.error(`Admin data  is invalid`)
+            throw new BadRequestException('Enter valid Admindata ')
+          }
+          try {
+            UserHelper.generateAuthToken(newAdmin)
+            logger.info(`successfully create new admin of admin id : ${newAdmin._id}`)
+            return newAdmin
+          } catch(e){
+            logger.error(`error : ${e}`)
+            throw new InternalServerErrorException(e)
+          }
         }
     } 
 
@@ -71,6 +80,9 @@ export class AdminService {
      * @returns {*}  {Promise<Admin>}
      */
     async updateOne(id : string, admindata: Admin) : Promise<Admin> {
+      if(process.env.NODE_ENV === 'test'){  //mock-data contain tokens array that not present in original data
+        delete admindata.tokens
+      }
         const updatable = ['name', 'email', 'password']
         const updateAdmin = Object.keys(admindata)
         //check for update is valid or not

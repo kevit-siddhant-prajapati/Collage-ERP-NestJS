@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AdminService } from './admin.service';
 import { Admin } from './schemas/admin.schema';
 import { JwtService } from '@nestjs/jwt';
+import { UserHelper } from '../helper/user.helper';
 
 const mockAdminModel = {
   find: jest.fn(),
@@ -83,37 +84,69 @@ describe('AdminService', () => {
     })
 
     describe('createOne', () => {
-      it('should create a new admin and return it', async () => {
-        const mockAdmin: Admin = await adminService.createOne({
-          name : "Mike",
-          email : "mike@example.com",
-          password : "Mike@1234",
-          tokens : []
-      });
-
-      mockAdminModel.create.mockResolvedValue(mockAdmin);
-      expect(mockAdmin).toBeDefined();
-      });
-    });
-
-    describe('updateOne', () => {
-      it('should update an existing admin and return the updated data', async () => {
-        const result : Admin = await adminService.updateOne('653365527f2490effb99f630', { 
+      it('should create a new admin', async () => {
+        const adminData = {
           name : "Lina",
           email : "lina@example.com",
           password : "Lina@1234",
           tokens : []
-         });
-         mockAdminModel.findByIdAndUpdate.mockResolvedValue(result);
-        expect(result).toBeDefined();
+        };
+  
+        const hashedPasswordAdmin = '$2b$08$36sq1MNRqpERM8IejEv9Be9qsNy9UtmqGr5ObMDTkBhb5VoldTtJW'; // replace with actual hashed password
+
+        jest.spyOn(UserHelper, 'convertToHash').mockResolvedValue(hashedPasswordAdmin);
+  
+        const mockGenerateAuthToken = jest.spyOn(UserHelper, 'generateAuthToken').mockResolvedValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTQ5YmVkY2M2ZDUxYTYzY2FkMDAzNGYiLCJpYXQiOjE3MDAxMjA0NDgsImV4cCI6MTcwMDEyNDA0OH0.dGd_YBQbCG69lgMVnf-qXxk3yN_Y8hHr35uPwb6vclw');
+        
+        mockAdminModel.create.mockResolvedValue(adminData);
+  
+        const result = await adminService.createOne(adminData);
+
+        expect(result).toEqual(adminData);
+        expect(mockGenerateAuthToken).toHaveBeenCalled();
+    });
+  })
+
+    describe('updateOne', () => {
+      it('should update an existing staff and return the updated data', async () => {
+        const mockAdmin = { 
+          //value that to be update
+          name : "Mike",
+          email : "mike@example.com",
+          password : "Mike@1234",
+          _id : '653365527f2490effb99f630',
+          tokens : []
+         };
+
+        const hashedPasswordAdmin = '$2b$08$36sq1MNRqpERM8IejEv9Be9qsNy9UtmqGr5ObMDTkBhb5VoldTtJW'; // replace with actual hashed password
+
+        jest.spyOn(UserHelper, 'convertToHash').mockResolvedValue(hashedPasswordAdmin);
+        
+        mockAdminModel.findByIdAndUpdate.mockResolvedValue(mockAdmin)
+
+        const result = await adminService.updateOne('653365527f2490effb99f630', {
+          //original value(in mock-data)
+          name: 'Linda',
+          email: 'linda',
+          password: 'Linda@123',
+          tokens: []
+        })
+
+        expect(result).toEqual(mockAdmin);
       });
     })
 
   describe('deleteOne', () => {
     it('should delete a admin and associated attendance data', async () => {
+      const mockAdmin = { 
+        name : "Mike",
+        email : "mike@example.com",
+        password : "Mike@1234",
+        _id : '653365527f2490effb99f630', 
+        tokens : []
+       };
+      mockAdminModel.findByIdAndDelete.mockResolvedValue(mockAdmin)
       const result = await adminService.deleteOne('653365527f2490effb99f630');
-      console.log(result)
-      mockAdminModel.findByIdAndDelete.mockResolvedValue(result)
       expect(result).toBeDefined();
     });
   });

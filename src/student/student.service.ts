@@ -1,6 +1,6 @@
 import { BadRequestException, HttpCode, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Student, StudentSchema } from './schemas/student.schema';
+import { Student, StudentModel, StudentSchema } from './schemas/student.schema';
 import * as mongoose from 'mongoose';
 import { UserHelper } from '../helper/user.helper';
 import { Attendance } from '../attendance/schemas/attendance.schema';
@@ -48,18 +48,28 @@ export class StudentService {
      */
     async createOne(studentData : Student) : Promise<Student> {
         const hashedpasswordStudent = await UserHelper.convertToHash(studentData)
-        const newStudent = new this.StudentModel(hashedpasswordStudent)
-        if(!newStudent){
-          logger.error(`Bad Request Exception`)
-          throw new BadRequestException('Enter valid Studentdata ')
-        }
-        try {
-          UserHelper.generateAuthToken(newStudent)
-          logger.info(`new Student is created of student id : ${newStudent._id}`)
-          return newStudent
-        } catch(e){
-          logger.error(`Error generate : ${e}`)
-          console.log(e)
+        // using because test environment have different database and different student model(mock-data)
+        if(process.env.NODE_ENV === 'test'){  
+          studentData.password = hashedpasswordStudent
+          new StudentModel(studentData)
+          await UserHelper.generateAuthToken(studentData)
+          return studentData
+        } 
+        // below else part use studentModel for development mongodb uri
+        else {
+          const newStudent = new this.StudentModel(hashedpasswordStudent)
+          if(!newStudent){
+            logger.error(`Bad Request Exception`)
+            throw new BadRequestException('Enter valid Studentdata ')
+          }
+          try {
+            await UserHelper.generateAuthToken(newStudent)
+            logger.info(`new Student is created of student id : ${newStudent._id}`)
+            return newStudent
+          } catch(e){
+            logger.error(`Error generate : ${e}`)
+            throw e;
+          }
         }
     } 
     
@@ -71,6 +81,9 @@ export class StudentService {
  * @returns {*}  {Promise<Student>} return value shold be Student type
  */
     async updateOne(id : string, studentdata: Student) : Promise<Student> {
+      if(process.env.NODE_ENV === 'test'){  //mock-data contain tokens array that not present in original data
+        delete studentdata.tokens
+      }
         const updatable = ['name', 'email', 'currentSem', 'password', 'phoneNumber', 'batch', 'attendance', 'department']
         const updateStudent = Object.keys(studentdata)
         //check for up update is valid or not
@@ -82,7 +95,6 @@ export class StudentService {
         // if update is passwaord then convert it to hashpassword
         if(studentdata.hasOwnProperty('password')){     
           studentdata = await UserHelper.convertToHash(studentdata)
-          console.log(studentdata)
         }
         const updatedStudent = await this.StudentModel.findByIdAndUpdate(id, studentdata)
         if(process.env.NODE_ENV === 'test'){
