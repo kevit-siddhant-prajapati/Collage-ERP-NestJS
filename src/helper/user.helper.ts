@@ -14,7 +14,6 @@ export class UserHelper{
  * @returns {*} 
  */
     static getPublicProfile(user : Staff | Student | Admin | any){
-        //if(process.env.NODE_ENV !== 'test'){
             let newUser = ({...user}._doc)
             try {
                 delete newUser["password"]
@@ -28,7 +27,6 @@ export class UserHelper{
                 delete user['tokens']
                 return user
             }
-       // }
     }
 /**
  * @description : use for authenticate  user using email and password
@@ -38,16 +36,12 @@ export class UserHelper{
  * @returns {*} 
  */
     static async findByCredentials( password : string, userPassword){
-        if(process.env.NODE_ENV !== 'test'){
             const isMatch = await bcrypt.compare(password, userPassword);
             if (!isMatch) {
                 throw new UnauthorizedException("Password is incorrect")
             } else {
                 return true;
             }
-        } else {
-            return true;
-        }
     }
 /**
  * @description : this function generate authentication token
@@ -56,7 +50,6 @@ export class UserHelper{
  * @returns {*} 
  */
     static async generateAuthToken(user){
-        if(process.env.NODE_ENV !== 'test'){
             const token = jwt.sign({_id : user._id.toString()}, process.env.JWT_SECRET_CODE, {expiresIn : '1h'})
             user.tokens = user.tokens.concat({token})
             const saveData = await user.save()
@@ -64,7 +57,6 @@ export class UserHelper{
                 throw new Error('User already exist!')
             }
             return token
-        }
     }
 
     /**
@@ -74,10 +66,8 @@ export class UserHelper{
      * @returns {*} 
      */
     static async convertToHash(user){
-        //if(process.env.NODE_ENV !== 'test'){
             const newPassword:any = await bcrypt.hash(user.password, 8); //generate hash password from student's password 
             user.password = newPassword;
             return user
-        //}
     }
 }

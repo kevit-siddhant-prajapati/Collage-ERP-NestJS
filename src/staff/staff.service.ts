@@ -53,7 +53,6 @@ export class StaffService {
      * @returns {*}  {Promise<Staff>}
      */
     async createOne(staffData : Staff) : Promise<Staff> {
-      if(process.env.NODE_ENV !== 'test'){
         const hashedpasswordStaff = await UserHelper.convertToHash(staffData)
         const newStaff = new this.StaffModel(hashedpasswordStaff)
         if(!newStaff){
@@ -67,9 +66,6 @@ export class StaffService {
         } catch(e){
           logger.error(`Error : ${e}`)
         }
-      } else{
-        return staffData
-      }
     } 
 
     /**
@@ -80,7 +76,6 @@ export class StaffService {
      * @returns {*}  {Promise<Staff>}
      */
     async updateOne(id : string, staffdata) : Promise<Staff> {
-      if(process.env.NODE_ENV !== 'test'){
         console.log(`updateable staff is call:`)
         const updatable = ['name', 'email', 'password', 'phoneNumber', 'attendance', 'department']
         const updateStaff = Object.keys(staffdata)
@@ -102,9 +97,6 @@ export class StaffService {
         }
         logger.info(`Update staff successfully of staff id : ${id}`)
         return updatedStaff
-      } else{
-        return staffdata
-      }
     }
     
     /**
@@ -114,7 +106,6 @@ export class StaffService {
      */
     async deleteOne(id : string) {
       const staff = await this.StaffModel.findByIdAndDelete(id)
-      if(process.env.NODE_ENV !== 'test'){
         if(!staff){
           logger.error(`Unable to find Staff of Staff id : ${id}`)
           throw new NotFoundException('Unable to Staff of given id')
@@ -122,6 +113,5 @@ export class StaffService {
         //delete attendance releted to that staff
         await this.AttendanceModel.deleteMany({ userId : staff._id})
         logger.info(`Successfully delete data of Staff: ${id}`)  
-      }
     }
 }

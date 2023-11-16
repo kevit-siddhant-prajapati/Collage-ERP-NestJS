@@ -7,6 +7,7 @@ import mongoose from "mongoose";
  * @class ManageAttendanceDto
  */
 export class ManageAttendanceDto {
+
      @IsDate()
      date : Date;
 
@@ -15,5 +16,7 @@ export class ManageAttendanceDto {
 
      @IsString()
      roleOfUser : string;
+
      userId : mongoose.Types.ObjectId;
 }
+

@@ -1,5 +1,9 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AnalysisService } from './analysis.service';
+import { Analysis1Dto } from './dto/analysis1.dto';
+import { Analysis2Dto } from './dto/analysis2.dto';
+import { Analysis3Dto } from './dto/analysis3.dto';
+import { Analysis4Dto } from './dto/analysis4.dto';
 
 @Controller('analysis')
 export class AnalysisController {
@@ -13,7 +17,7 @@ export class AnalysisController {
      * @returns {*} 
      */
     @Get('1')
-    async getStudentByYear(){
+    async getStudentByYear() : Promise<Analysis1Dto[]>{
         return this.analysisService.analysis1()
     }
 
@@ -31,7 +35,7 @@ export class AnalysisController {
     @Post('2')
     async getAbsentStudent(
         @Body() input
-    ){
+    ): Promise<Analysis2Dto[]>{
         return this.analysisService.analysis2(input)
     }
 
@@ -49,7 +53,7 @@ export class AnalysisController {
     @Post('3')
     async studentWithLessAttendance(
         @Body() input
-    ) {
+    ) : Promise<Analysis3Dto[]>{
         return this.analysisService.analysis3(input)
     }
 
@@ -65,7 +69,7 @@ export class AnalysisController {
     @Post('4')
     async studentIntakeAnalysis(
         @Body() input
-    ){
+    ): Promise<Analysis4Dto[]>{
         return this.analysisService.analysis4(input)
     }
 }

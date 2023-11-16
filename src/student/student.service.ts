@@ -47,7 +47,6 @@ export class StudentService {
      * @returns {*}  {Promise<Student>}
      */
     async createOne(studentData : Student) : Promise<Student> {
-      if(process.env.NODE_ENV !== 'test'){
         const hashedpasswordStudent = await UserHelper.convertToHash(studentData)
         const newStudent = new this.StudentModel(hashedpasswordStudent)
         if(!newStudent){
@@ -62,9 +61,6 @@ export class StudentService {
           logger.error(`Error generate : ${e}`)
           console.log(e)
         }
-      } else{
-        return studentData
-      }
     } 
     
 /**
@@ -75,7 +71,6 @@ export class StudentService {
  * @returns {*}  {Promise<Student>} return value shold be Student type
  */
     async updateOne(id : string, studentdata: Student) : Promise<Student> {
-      if(process.env.NODE_ENV !== 'test'){
         const updatable = ['name', 'email', 'currentSem', 'password', 'phoneNumber', 'batch', 'attendance', 'department']
         const updateStudent = Object.keys(studentdata)
         //check for up update is valid or not
@@ -99,9 +94,6 @@ export class StudentService {
           throw new NotFoundException('Given student not found')
         }
         return updatedStudent
-      } else {
-        return studentdata
-      }
     }
     
     /**
@@ -111,14 +103,12 @@ export class StudentService {
      */
     async deleteOne(id : string) {
       const student = await this.StudentModel.findByIdAndDelete(id)
-      if(process.env.NODE_ENV !== 'test'){
         if(!student){
           throw new NotFoundException('Given student not found')
         }
         //delete attendance releted to that perticular student
         await this.AttendanceModel.deleteMany({ userId : student._id}) 
         logger.info(`Succefully delete student of id : ${id}`)
-      }
     }
 
 }

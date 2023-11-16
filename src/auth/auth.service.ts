@@ -6,6 +6,7 @@ import { UserHelper } from '../helper/user.helper';
 import { Staff } from '../staff/schemas/staff.schema';
 import { Student } from '../student/schemas/student.schema';
 import { logger } from '../logger/logger.service';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,7 @@ export class AuthService {
  * @param {*} credentials
  * @returns {*}  {Promise<Student>}
  */
-async loginStudent(credentials) : Promise<Student>{
+async loginStudent(credentials) : Promise<LoginUserDto>{
         const email = credentials.email
         const password = credentials.password
         const student :any = await this.StudentModel.findOne({ email : email });
@@ -43,7 +44,7 @@ async loginStudent(credentials) : Promise<Student>{
        * @param {*} credentials
        * @returns {*}  {Promise<Staff>}
        */
-      async loginStaff(credentials ) : Promise<Staff>{
+      async loginStaff(credentials ) : Promise<LoginUserDto>{
         const email = credentials.email
         const password = credentials.password
         const staff :any = await this.StaffModel.findOne({ email : email });
@@ -63,7 +64,7 @@ async loginStudent(credentials) : Promise<Student>{
  * @param {*} credentials
  * @returns {*}  {Promise<Staff>}
  */
-      async loginAdmin(credentials ) : Promise<Staff>{
+      async loginAdmin(credentials ) : Promise<LoginUserDto>{
         const email = credentials.email
         const password = credentials.password
         const admin :any = await this.AdminModel.findOne({ email : email });
@@ -80,9 +81,11 @@ async loginStudent(credentials) : Promise<Student>{
       }
 
       async logout(){
-        await this.StudentModel.updateMany({}, { $set: { tokens: [] } })
-        await this.AdminModel.updateMany({}, { $set: { tokens: [] } })
-        await this.StaffModel.updateMany({}, { $set: { tokens: [] } })
+        Promise.all([
+          this.StudentModel.updateMany({}, { $set: { tokens: [] } }),
+          this.AdminModel.updateMany({}, { $set: { tokens: [] } }),
+          this.StaffModel.updateMany({}, { $set: { tokens: [] } })
+        ]).then()
         logger.info('Logout successfully')
       }
 }

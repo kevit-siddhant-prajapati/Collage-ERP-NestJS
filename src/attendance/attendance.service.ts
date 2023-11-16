@@ -133,7 +133,6 @@ export class AttendanceService {
      * @returns {*}  {Promise<Attendance>}
      */
     async manageAttendanceById(attendanceData : Attendance, id : string): Promise<Attendance>{
-        if(process.env.NODE_ENV !== 'test'){
             const updatable = [ 'status', 'date']
             const updateAttend = Object.keys(attendanceData)
             //check if given all update is valid or not
@@ -150,9 +149,6 @@ export class AttendanceService {
             }
             logger.info(`Successfully update attendance of id : ${id}`)
             return updateAttendance
-        } else {
-            return attendanceData
-        }
     }
 
     /**
