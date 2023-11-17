@@ -24,9 +24,11 @@ export class AttendanceController {
         @Body() attendance : fillAttendanceDto
     ){
         if(attendance.role == 'Student'){
-            return this.attendanceService.fillStudentAttendance(attendance)
+            await this.attendanceService.fillStudentAttendance(attendance)
+            return "attendance of Student Filled Successfully"
         } else if (attendance.role == 'Staff') {
-            return this.attendanceService.fillStaffAttendance(attendance)
+            await this.attendanceService.fillStaffAttendance(attendance)
+            return "attendance of Staff Filled Successfully"
         } else {
             throw new BadRequestException('Enter valid Role of User')
         }

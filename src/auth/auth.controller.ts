@@ -19,11 +19,11 @@ export class AuthController {
     async loginUser(
         @Body() credencials :LoginUserDto,
     ) : Promise<any>{
-        if(credencials.role == "Student"){
+        if(credencials.role === "Student"){
             return this.authService.loginStudent(credencials)
-        } else if(credencials.role == "Staff"){
+        } else if(credencials.role === "Staff"){
             return this.authService.loginStaff(credencials)
-        } else if(credencials.role == "Admin") {
+        } else if(credencials.role === "Admin") {
             return this.authService.loginAdmin(credencials)
         } else {
             throw new BadRequestException("Enter valid role")

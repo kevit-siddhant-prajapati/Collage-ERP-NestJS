@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsString } from "class-validator";
+import { IsBoolean, IsDate, IsMongoId, IsString } from "class-validator";
 import mongoose from "mongoose";
 /**
  * @description : this dto manage attendance using different fields
@@ -17,6 +17,7 @@ export class ManageAttendanceDto {
      @IsString()
      roleOfUser : string;
 
+     @IsMongoId()
      userId : mongoose.Types.ObjectId;
 }
 

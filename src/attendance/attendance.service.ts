@@ -22,7 +22,7 @@ export class AttendanceService {
      * @param {fillAttendanceDto} attendanceData
      * @returns {*} 
      */
-    async fillStudentAttendance(attendanceData :fillAttendanceDto) : Promise<string> {
+    async fillStudentAttendance(attendanceData :fillAttendanceDto) {
         const attendStudent = attendanceData.attendance;
         for (const attendie of attendStudent) {
             //find all student in given attendance array status true
@@ -65,7 +65,6 @@ export class AttendanceService {
             }
         }
         logger.info(`Student of data ${attendanceData.date} is filled`)
-        return "attendance of Student Filled Successfully"
     }
 
 
@@ -75,7 +74,7 @@ export class AttendanceService {
      * @param {fillAttendanceDto} attendanceData
      * @returns {*} 
      */
-    async fillStaffAttendance(attendanceData :fillAttendanceDto) : Promise<string> {
+    async fillStaffAttendance(attendanceData :fillAttendanceDto) {
         const attendStaff = attendanceData.attendance;
         for (const attendie of attendStaff) {
             //find data of each staff that is given in array
@@ -121,7 +120,6 @@ export class AttendanceService {
             }
         }
         logger.info(`attendance of staff is filled`)
-        return "attendance of Staff Filled Successfully"
     }
 
 
@@ -156,7 +154,7 @@ export class AttendanceService {
             return updateAttendance
     }
 
-    /**a
+    /**
      * @description : get Attendance of user using its role
      * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
      * @param {Attendance} role
