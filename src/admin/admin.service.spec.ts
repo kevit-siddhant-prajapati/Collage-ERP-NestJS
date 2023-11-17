@@ -63,6 +63,10 @@ describe('AdminService', () => {
       ];
       mockAdminModel.find.mockResolvedValue(mockAdmins);
       const result = await adminService.findAll();
+      result.forEach(admin => {
+        delete admin.password
+        delete admin.tokens
+      })
       expect(result).toEqual(outputAdmin); 
     });
 

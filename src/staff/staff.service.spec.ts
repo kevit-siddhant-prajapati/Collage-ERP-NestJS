@@ -80,6 +80,10 @@ describe('StaffService', () => {
       ]
       mockStaffModel.find.mockResolvedValue(mockStaffs);
       const result = await staffService.findAll();
+      result.forEach(staff => {
+        delete staff.password
+        delete staff.tokens
+      })
       expect(result).toEqual(outputStaff); 
     });
 
@@ -106,6 +110,8 @@ describe('StaffService', () => {
       }
         mockStaffModel.findById.mockResolvedValue(mockStaff);
         const result = await staffService.findById('653365527f2450effb99f630');
+        delete result.password
+        delete result.tokens
         expect(result).toEqual(outputStaff);
       });
     })

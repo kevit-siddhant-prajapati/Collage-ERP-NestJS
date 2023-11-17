@@ -4,6 +4,9 @@ import { Analysis1Dto } from './dto/analysis1.dto';
 import { Analysis2Dto } from './dto/analysis2.dto';
 import { Analysis3Dto } from './dto/analysis3.dto';
 import { Analysis4Dto } from './dto/analysis4.dto';
+import { Analysis2BodyDto } from './dto/analysis2-body.dto';
+import { Analysis3BodyDto } from './dto/analysis3-body.dto';
+import { Analysis4BodyDto } from './dto/analysis4-body.dto';
 
 @Controller('analysis')
 export class AnalysisController {
@@ -34,7 +37,7 @@ export class AnalysisController {
      */
     @Post('2')
     async getAbsentStudent(
-        @Body() input
+        @Body() input : Analysis2BodyDto
     ): Promise<Analysis2Dto[]>{
         return this.analysisService.analysis2(input)
     }
@@ -52,7 +55,7 @@ export class AnalysisController {
      */
     @Post('3')
     async studentWithLessAttendance(
-        @Body() input
+        @Body() input : Analysis3BodyDto
     ) : Promise<Analysis3Dto[]>{
         return this.analysisService.analysis3(input)
     }
@@ -68,7 +71,7 @@ export class AnalysisController {
      */
     @Post('4')
     async studentIntakeAnalysis(
-        @Body() input
+        @Body() input : Analysis4BodyDto
     ): Promise<Analysis4Dto[]>{
         return this.analysisService.analysis4(input)
     }

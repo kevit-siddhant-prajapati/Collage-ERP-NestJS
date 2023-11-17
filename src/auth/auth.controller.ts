@@ -2,6 +2,7 @@ import { BadRequestException, Body, Controller, Get, HttpCode, Post, Req, Res } 
 import { LoginUserDto } from './dto/login-user.dto';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
+import { Student } from 'src/student/schemas/student.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +18,7 @@ export class AuthController {
     @HttpCode(200)
     async loginUser(
         @Body() credencials :LoginUserDto,
-    ) {
+    ) : Promise<any>{
         if(credencials.role == "Student"){
             return this.authService.loginStudent(credencials)
         } else if(credencials.role == "Staff"){
@@ -35,6 +36,7 @@ export class AuthController {
      * @returns {*} 
      */
     @Get('logout')
+    @HttpCode(200)
     async logoutUser(){
         return this.authService.logout()
     }

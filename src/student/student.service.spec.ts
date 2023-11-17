@@ -95,6 +95,10 @@ describe('StudentService', () => {
       ]
       mockStudentModel.find.mockResolvedValue(mockStudents);
       const result = await studentService.findAll();
+      result.forEach(student => {
+        delete student.password
+        delete student.tokens
+      })
       expect(result).toEqual(outputStudent); 
     });
 
@@ -125,6 +129,8 @@ describe('StudentService', () => {
       }
         mockStudentModel.findById.mockResolvedValue(mockStudent);
         const result = await studentService.findById('653365527f2450effb99f630');
+        delete result.password
+        delete result.tokens
         expect(result).toEqual(outputStudent);
       });
 

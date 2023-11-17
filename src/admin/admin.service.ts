@@ -43,7 +43,6 @@ export class AdminService {
           tokens : 0,
           updatedAt : 0
       })
-      console.log(admin)
       if(!admin){
         logger.error(`Unable to find data of Admin of Admin id : ${id}`)
         throw new NotFoundException('Unable to find data of Admin')

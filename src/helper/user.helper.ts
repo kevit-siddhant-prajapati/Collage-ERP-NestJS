@@ -15,9 +15,7 @@ export class UserHelper{
  * @param {*} userPassword
  * @returns {*} 
  */
-    static async findByCredentials( password : string, userPassword){
-        //console.log(password)
-        //console.log(userPassword)
+    static async findByCredentials( password : string, userPassword) : Promise<boolean>{
             const isMatch = await bcrypt.compare(password, userPassword);
             if (!isMatch) {
                 throw new UnauthorizedException("Password is incorrect")
@@ -31,7 +29,7 @@ export class UserHelper{
  * @param {*} user
  * @returns {*} 
  */
-    static async generateAuthToken(user){
+    static async generateAuthToken(user : Student | Staff | Admin | any) : Promise<string>{
             const token = jwt.sign({_id : user._id.toString()}, process.env.JWT_SECRET_CODE, {expiresIn : '1h'})
             user.tokens = user.tokens.concat({token})
             const saveData = await user.save()
@@ -47,7 +45,7 @@ export class UserHelper{
      * @param {*} user
      * @returns {*} 
      */
-    static async convertToHash(user){
+    static async convertToHash(user : Student | Staff | Admin) : Promise<Student | Staff | Admin | any>{
             const newPassword:any = await bcrypt.hash(user.password, 8); //generate hash password from student's password 
             user.password = newPassword;
             return user
