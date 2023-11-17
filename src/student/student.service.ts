@@ -21,12 +21,16 @@ export class StudentService {
      * @returns {*}  {Promise<Student[]>}
      */
     async findAll() : Promise<Student[]>{
-        const students = await this.StudentModel.find({})
-        const secureStudents = await Promise.all(
-          students.map(async (student) => await UserHelper.getPublicProfile(student))
-        );
+        const students = await this.StudentModel.find({}, {
+          createdAt : 0,
+          __v : 0,
+          password : 0,
+          tokens : 0,
+          updatedAt : 0
+        })
+        
         logger.info(`successfully print all data of student`)
-        return secureStudents;
+        return students;
     }
 
     /**

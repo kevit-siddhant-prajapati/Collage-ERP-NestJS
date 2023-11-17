@@ -21,12 +21,15 @@ export class StaffService {
  * @returns {*}  {Promise<Staff[]>}
  */
     async findAll() : Promise<Staff[]>{
-        const staffs = await this.StaffModel.find({})
-        const secureStaff = await Promise.all(
-          staffs.map(async (staff) => await UserHelper.getPublicProfile(staff))
-        );
+      const staffs = await this.StaffModel.find({}, {
+          createdAt : 0,
+          __v : 0,
+          password : 0,
+          tokens : 0,
+          updatedAt : 0
+        })
         logger.info(`Successfully getting data of all staff`)
-        return secureStaff;
+        return staffs;
     }
 
 
@@ -92,7 +95,7 @@ export class StaffService {
       if(process.env.NODE_ENV === 'test'){  //mock-data contain tokens array that not present in original data
         delete staffdata.tokens
       }
-        //console.log(`updateable staff is call:`)
+        console.log(`updateable staff is call:`)
         const updatable = ['name', 'email', 'password', 'phoneNumber', 'attendance', 'department']
         const updateStaff = Object.keys(staffdata)
         // check for if update is valid or not
