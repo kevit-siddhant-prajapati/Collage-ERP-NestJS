@@ -36,7 +36,9 @@ export class StudentAuthMiddleware implements NestMiddleware{
                     const dbtestConnection: Connection = mongoose.createConnection(process.env.MONGO_TEST_CONNECTION_URI); //for select testdatabase
                     const StudentModel = dbtestConnection.model('Student', StudentSchema)
 
-                    const student = await StudentModel.findOne({})
+                    const student = await StudentModel.findOne({_id : decoded._id, 'tokens.token':tokenArr[1]})
+                    //console.log(dbtestConnection.getMongo())
+                    //console.log(student)
                     if(!student){
                         throw new Error('User not found')
                     }
@@ -98,7 +100,7 @@ export class StaffAuthMiddleware implements NestMiddleware{
                 const dbtestConnection: Connection = mongoose.createConnection(process.env.MONGO_TEST_CONNECTION_URI); //for select testdatabase
                 const StaffModel = dbtestConnection.model('Staff', StaffSchema)
 
-                const staff = await StaffModel.findOne({})
+                const staff = await StaffModel.findOne({_id : decoded._id, 'tokens.token':tokenArr[1]})
                 if(!staff){
                     throw new Error('User not found')
                 }
@@ -151,7 +153,7 @@ export class AdminAuthMiddleware implements NestMiddleware{
             if(process.env.NODE_ENV === 'test'){
                 const dbtestConnection: Connection = mongoose.createConnection(process.env.MONGO_TEST_CONNECTION_URI); //for select testdatabase
                 const AdminModel = dbtestConnection.model('Admin', AdminSchema)
-                const admin = await AdminModel.findOne({})
+                const admin = await AdminModel.findOne({_id : decoded._id, 'tokens.token':tokenArr[1]})
                 if(!admin){
                     throw new Error('User not found')
                 }

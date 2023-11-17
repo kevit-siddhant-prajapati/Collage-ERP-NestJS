@@ -22,7 +22,9 @@ export class StudentService {
      */
     async findAll() : Promise<Student[]>{
         const students = await this.StudentModel.find({})
-        const secureStudents = students.map(student => UserHelper.getPublicProfile(student))
+        const secureStudents = await Promise.all(
+          students.map(async (student) => await UserHelper.getPublicProfile(student))
+        );
         logger.info(`successfully print all data of student`)
         return secureStudents;
     }

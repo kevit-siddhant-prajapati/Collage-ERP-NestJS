@@ -80,13 +80,13 @@ describe('AppController (e2e)', () => {
 
     it('authorize user should create a new staff', async () => {
       const admin = adminStub()
-      return request(app.getHttpServer()).post('/staffs/new')
+      const result = await request(app.getHttpServer()).post('/staffs/new')
       .set('Authorization', `Bearer ${admin.tokens[0].token}`)
       .send({
           name : 'Aman',
           email :'aman@example.com',
           password : 'Aman@1234',
-          phoneNumber : 2134567890,
+          phoneNumber : "2134567890",
           department : 'CE',
           attendance : 100
       }).expect(201)
@@ -106,11 +106,12 @@ describe('AppController (e2e)', () => {
 
     it('Should not login existing Staff', async () => {
       const staff = staffStub()
-      return request(app.getHttpServer()).post('/auth/login').send({
+      const result = await request(app.getHttpServer()).post('/auth/login').send({
           email : staff.email,
           password : '12abc1234',
           role : "Staff"
       }).expect(401)
+
     })
   })
 
@@ -118,7 +119,6 @@ describe('AppController (e2e)', () => {
   describe('deleteStaff', () => {
     it('should delete account for staff', async () => {
       const staff: any = staffStub()
-      console.log(staff)
       return request(app.getHttpServer()).delete(`/staffs/delete/${staff._id}`)
       .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
       .send()
@@ -135,12 +135,13 @@ describe('AppController (e2e)', () => {
   describe('updateStaff', () => {
     it('Should update valid staff fields', async () => {
       const staff: any = staffStub()
-      return request(app.getHttpServer())
+      const result = await request(app.getHttpServer())
       .patch(`/staffs/update/${staff._id}`)
       .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
       .send({
           name : "siddhant",
-      }).expect(200)
+      })
+      .expect(200)
     })
 
     it('Should not update staff with unauthorize users', async () => {

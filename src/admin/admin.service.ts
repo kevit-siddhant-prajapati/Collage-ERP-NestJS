@@ -19,7 +19,9 @@ export class AdminService {
      */
     async findAll() : Promise<Admin[]>{
         const admins = await this.AdminModel.find({})
-        const secureAdmin = admins.map(admin => UserHelper.getPublicProfile(admin))
+        const secureAdmin = await Promise.all(
+          admins.map(async (admin) => await UserHelper.getPublicProfile(admin))
+        );
         logger.info(`Successfully getting data of all Admin`)
         return secureAdmin;
     }

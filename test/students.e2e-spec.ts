@@ -79,19 +79,21 @@ describe('AppController (e2e)', () => {
       }).expect(401)
     })
 
+
     it('authorize user should create a new student', async () => {
-      return request(app.getHttpServer()).post('/students/new')
+      const result = await request(app.getHttpServer()).post('/students/new')
       .set('Authorization', `Bearer ${staffStub().tokens[0].token}`)
       .send({
           name : 'Aman',
           email :'aman@example.com',
           password : 'Aman@1234',
-          phoneNumber : 2134567890,
+          phoneNumber : "2134567890",
           department : 'CE',
           batch : 2020,
           currentSem : 1,
           attendance : 125
-      }).expect(201)
+      })
+      .expect(201)
     })
 
   })
@@ -106,13 +108,15 @@ describe('AppController (e2e)', () => {
       }).expect(200)
     })
 
+
     it('Should not login existing Student', async () => {
       const student = studentStub()
-      return request(app.getHttpServer()).post('/auth/login').send({
+      const result = await request(app.getHttpServer()).post('/auth/login').send({
           email : student.email,
           password : '12abc1234',
           role : "Student"
-      }).expect(401)
+      })
+      .expect(401)
     })
   })
 

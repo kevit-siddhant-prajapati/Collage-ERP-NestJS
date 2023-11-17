@@ -66,7 +66,6 @@ describe('AppController (e2e)', () => {
 describe('loginAdmin', () => {
   it('Should login existing Admin', async () => {
     const admin = adminStub()
-    console.log(admin)
       const response = await request(app.getHttpServer()).post('/auth/login').send({
           email : admin.email,
           password : admin.password,
@@ -88,7 +87,6 @@ describe('loginAdmin', () => {
 describe('deleteAdmin', () => {
   it('should delete account for admin', async () => {
     const admin : any= adminStub()
-    console.log(admin)
       await request(app.getHttpServer()).delete(`/admin/delete/${admin._id}`)
       .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
       .send()

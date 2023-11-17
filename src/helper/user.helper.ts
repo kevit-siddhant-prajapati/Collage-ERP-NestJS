@@ -36,8 +36,8 @@ export class UserHelper{
  * @returns {*} 
  */
     static async findByCredentials( password : string, userPassword){
-        console.log(password)
-        console.log(userPassword)
+        //console.log(password)
+        //console.log(userPassword)
             const isMatch = await bcrypt.compare(password, userPassword);
             if (!isMatch) {
                 throw new UnauthorizedException("Password is incorrect")

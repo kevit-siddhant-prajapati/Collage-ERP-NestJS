@@ -15,7 +15,7 @@ export const studentStub = ()  => {
         currentSem : 1,
         attendance : 120,
         tokens : [{
-            token : jwt.sign({_id : new mongoose.Types.ObjectId()}, process.env.JWT_SECRET_CODE)
+            token : jwt.sign({_id : new ObjectId("654c90d94d320ee33c106517")}, process.env.JWT_SECRET_CODE)
         }]
         }
         //console.log(`Generated token: ${studentOne.tokens[0].token}`);

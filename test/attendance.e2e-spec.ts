@@ -120,12 +120,13 @@ describe('AppController (e2e)', () => {
 
     describe('updateAttendanceStudent', () => {
         it('Should update valid student fields', async () => {
-            await request(app.getHttpServer())
+            const result = await request(app.getHttpServer())
             .patch(`/attendance/update/${studentAttendanceStub()._id}`)
             .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
             .send({
                 date : "2020-08-22",
-            }).expect(200)
+            })
+            .expect(200)
         })
         
         
@@ -141,7 +142,7 @@ describe('AppController (e2e)', () => {
 
     describe('fillAttendanceStaff', () => {
         it('Should create attendance for staff', async () => {
-            await request(app.getHttpServer())
+            const result = await request(app.getHttpServer())
             .post('/attendance/fill')
             .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
             .send({
@@ -149,10 +150,10 @@ describe('AppController (e2e)', () => {
                 attendance : [
                     staffStub()._id,
                 ],
-                roleOfUser : "Staff"
+                role : "Staff"
             })
             .expect(200)
-            await app.close()
+            
         })
         
         it('Unauthorize user Should not fill attendance of student', async () => {
@@ -163,11 +164,12 @@ describe('AppController (e2e)', () => {
                 attendance : [
                     staffStub()._id,
                 ],
-                roleOfUser : "Staff"
+                role : "Staff"
             })
             .expect(401)
         })
     })
+
 
     describe('getAttendanceStaff', () => {
         it('Authorize User show data of staffs', async () => {
@@ -192,7 +194,7 @@ describe('AppController (e2e)', () => {
     })
     
     describe('manageAttendance', () => {
-        it('Unauthorize User Should not update invalid staff fields', async () => {
+        it('Unauthorize User Should not update invalid attendance', async () => {
             await request(app.getHttpServer())
             .patch(`/attendance/update/${staffAttendanceStub()._id}`)
             .send({
@@ -200,14 +202,13 @@ describe('AppController (e2e)', () => {
             }).expect(401)
         })
 
-        it('Update valide staff for update', async () => {
-            const result = await request(app.getHttpServer())
+        it('Update valide attendandance of staff', async () => {
+             await request(app.getHttpServer())
             .patch(`/attendance/update/${staffAttendanceStub()._id}`)
             .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
             .send({
                 date : "2021-06-18",
             }).expect(200)
-            console.log(result)
         })
     })
     
