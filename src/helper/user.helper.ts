@@ -7,27 +7,7 @@ import { Staff } from "src/staff/schemas/staff.schema";
 import { Student } from "src/student/schemas/student.schema";
 
 export class UserHelper{
-/**
- * @description : remove unwanted field from document
- * @author (Set the text for this tag by adding docthis.authorName to your settings file.)
- * @param {*} user
- * @returns {*} 
- */
-    static getPublicProfile(user : Staff | Student | Admin | any){
-            let newUser = ({...user}._doc)
-            try {
-                delete newUser["password"]
-                delete newUser["tokens"]
-                delete newUser["createdAt"]
-                delete newUser["updatedAt"]
-                delete newUser["__v"]
-                return user
-            }catch(e){
-                delete user['password']
-                delete user['tokens']
-                return user
-            }
-    }
+
 /**
  * @description : use for authenticate  user using email and password
  * @author (Set the text for this tag by adding docthis.authorName to your settings file.)

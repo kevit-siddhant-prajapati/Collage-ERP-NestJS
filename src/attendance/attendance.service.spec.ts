@@ -103,6 +103,7 @@ describe('AttendanceService', () => {
         roleOfUser : 'Student',
         userId : new ObjectId("653368ad805360f92d8cb99a")
       }, '65336973805360f92d8cb9bb'); 
+      
       mockAttendanceModel.findByIdAndUpdate.mockResolvedValue(result)
       expect(result).toEqual(mockAttendance);
     })

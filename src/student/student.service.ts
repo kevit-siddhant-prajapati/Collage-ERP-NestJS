@@ -40,8 +40,13 @@ export class StudentService {
      * @returns {*}  {Promise<Student>}
      */
     async findById(id: string) : Promise<Student>{
-      const student = await this.StudentModel.findById(id)
-      UserHelper.getPublicProfile(student)
+      const student = await this.StudentModel.findById(id,{
+        createdAt : 0,
+          __v : 0,
+          password : 0,
+          tokens : 0,
+          updatedAt : 0
+      })
       logger.info(`successfully find Student of _id: ${id}`)
       return student;
     }
@@ -106,7 +111,7 @@ export class StudentService {
         if(process.env.NODE_ENV === 'test'){
           return updatedStudent
         }
-        UserHelper.getPublicProfile(updatedStudent)
+        console.log(updatedStudent)
         if(!updatedStudent){
           logger.error(`Given student of id : ${id} not found`)
           throw new NotFoundException('Given student not found')

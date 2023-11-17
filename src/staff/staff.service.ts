@@ -40,12 +40,17 @@ export class StaffService {
      * @returns {*}  {Promise<Staff>}
      */
     async findById(id: string) : Promise<Staff>{
-      const staff = await this.StaffModel.findById(id)
+      const staff = await this.StaffModel.findById(id,{
+        createdAt : 0,
+          __v : 0,
+          password : 0,
+          tokens : 0,
+          updatedAt : 0
+      })
       if(!staff){
         logger.error(`Unable to find data of Staff id : ${id}`)
         throw new NotFoundException('Unable to find data of given staff')
       }
-      UserHelper.getPublicProfile(staff)
       logger.info(`Successfully get data of Staff id : ${id}`)
       return staff;
     }
@@ -109,7 +114,6 @@ export class StaffService {
           staffdata = await UserHelper.convertToHash(staffdata)
         }
         const updatedStaff = await this.StaffModel.findByIdAndUpdate(id, staffdata)
-        UserHelper.getPublicProfile(updatedStaff)
         if(!updatedStaff){
           logger.error(`Unable to find Staff of id : ${id}`)
           throw new NotFoundException('Given staff not found')

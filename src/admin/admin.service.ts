@@ -36,14 +36,20 @@ export class AdminService {
      * @returns {*}  {Promise<Admin>}
      */
     async findById(id: string) : Promise<Admin>{
-      const admin = await this.AdminModel.findById(id)
+      const admin = await this.AdminModel.findById(id, {
+        createdAt : 0,
+          __v : 0,
+          password : 0,
+          tokens : 0,
+          updatedAt : 0
+      })
+      console.log(admin)
       if(!admin){
         logger.error(`Unable to find data of Admin of Admin id : ${id}`)
         throw new NotFoundException('Unable to find data of Admin')
       }
-      const secureAdmin = UserHelper.getPublicProfile(admin)
       logger.info(`Successfully getting data of admin Id : ${id}`)
-      return secureAdmin;
+      return admin;
     }
 
 
@@ -101,7 +107,7 @@ export class AdminService {
           admindata = await UserHelper.convertToHash(admindata)
         }
         const updatedAdmin = await this.AdminModel.findByIdAndUpdate(id, admindata)
-        UserHelper.getPublicProfile(updatedAdmin)
+
         if(!updatedAdmin){
           logger.error(`Given Admin not found of Admin id : ${id}`)
           throw new NotFoundException('Given Admin not found')
