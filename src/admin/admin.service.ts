@@ -4,6 +4,8 @@ import { Admin, AdminModel } from './schemas/admin.schema';
 import mongoose from 'mongoose';
 import { UserHelper } from '../helper/user.helper';
 import { logger } from '../logger/logger.service';
+import { CreateAdminDto } from './dto/crete-admin.dto';
+import { UpdateAdminDto } from './dto/update-admin.dto';
 
 @Injectable()
 export class AdminService {
@@ -18,7 +20,7 @@ export class AdminService {
      * @returns {*}  {Promise<Admin[]>}
      */
     async findAll() : Promise<Admin[]>{
-        const admins = await this.AdminModel.find({}, {
+        const admins : Admin[] = await this.AdminModel.find({}, {
           createdAt : 0,
           __v : 0,
           password : 0,
@@ -36,7 +38,7 @@ export class AdminService {
      * @returns {*}  {Promise<Admin>}
      */
     async findById(id: string) : Promise<Admin>{
-      const admin = await this.AdminModel.findById(id, {
+      const admin : Admin = await this.AdminModel.findById(id, {
         createdAt : 0,
           __v : 0,
           password : 0,
@@ -57,8 +59,8 @@ export class AdminService {
      * @param {Admin} adminData
      * @returns {*}  {Promise<Admin>}
      */
-    async createOne(adminData : Admin) : Promise<Admin> {
-        const hashedpasswordAdmin = await UserHelper.convertToHash(adminData)
+    async createOne(adminData : CreateAdminDto) : Promise<Admin> {
+        const hashedpasswordAdmin : string = await UserHelper.convertToHash(adminData)
         if(process.env.NODE_ENV === 'test'){  
           adminData.password = hashedpasswordAdmin
           new AdminModel(adminData)
@@ -89,14 +91,15 @@ export class AdminService {
      * @param {Admin} admindata
      * @returns {*}  {Promise<Admin>}
      */
-    async updateOne(id : string, admindata: Admin) : Promise<Admin> {
+    async updateOne(id : string, admindata: UpdateAdminDto) : Promise<Admin> {
       if(process.env.NODE_ENV === 'test'){  //mock-data contain tokens array that not present in original data
         delete admindata.tokens
+        delete admindata._id
       }
-        const updatable = ['name', 'email', 'password']
-        const updateAdmin = Object.keys(admindata)
+        const updatable : Array<String> = ['name', 'email', 'password']
+        const updateAdmin : Array<String> = Object.keys(admindata)
         //check for update is valid or not
-        const isValidUpdate = updateAdmin.every(update => updatable.includes(update))
+        const isValidUpdate : boolean = updateAdmin.every(update => updatable.includes(update))
         if(!isValidUpdate){
           logger.error(`Invalid Update for Admin id : ${id}`)
           throw new BadRequestException('not valid Update')
@@ -105,7 +108,7 @@ export class AdminService {
         if(admindata.hasOwnProperty('password')){
           admindata = await UserHelper.convertToHash(admindata)
         }
-        const updatedAdmin = await this.AdminModel.findByIdAndUpdate(id, admindata)
+        const updatedAdmin : Admin = await this.AdminModel.findByIdAndUpdate(id, admindata)
 
         if(!updatedAdmin){
           logger.error(`Given Admin not found of Admin id : ${id}`)
@@ -122,7 +125,7 @@ export class AdminService {
      * @returns {*} 
      */
     async deleteOne(id : string) {
-        const deletedAdmin = await this.AdminModel.findByIdAndDelete(id)
+        const deletedAdmin : Admin = await this.AdminModel.findByIdAndDelete(id)
         if(!deletedAdmin){
           logger.error(`Admin of admin id not found : ${id}`)
           throw new NotFoundException(`Given Admin not found`)

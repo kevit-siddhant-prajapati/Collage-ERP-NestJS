@@ -12,28 +12,28 @@ export class CreateStudentDto {
     @IsOptional()
     _id : string;
     @IsString()
-    readonly name :string
+    name :string
 
     @IsString()
-    readonly email:string
+    email:string
 
     @IsInt()
-    readonly currentSem:number
+    currentSem:number
 
     @IsString()
-    readonly password:string
+    password:string
 
     @IsString()
-    readonly phoneNumber : string
+    phoneNumber : string
 
     @IsInt()
-    readonly batch : number
+    batch : number
 
     @IsString()
-    readonly department : string
+    department : string
 
     @IsInt()
-    readonly attendance : number
+    attendance : number
 
     @IsOptional()
     tokens: Array<{ token: string }>;

@@ -1,10 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import mongoose, { Connection } from 'mongoose';
-import { ConfigModule } from '@nestjs/config';
-import { DatabaseService } from '../src/database/database.service';
 import { studentStub } from './stubs/students.stub';
 import { studentAttendanceStub } from './stubs/student-attendance.stub';
 import { staffAttendanceStub } from './stubs/staff-attendance.stub';
@@ -33,20 +30,6 @@ describe('AppController (e2e)', () => {
   })
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          envFilePath: './.test.env',
-          isGlobal : true,
-        }),
-        AppModule,
-      ],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
-    dbConnection = moduleFixture.get<DatabaseService>(DatabaseService).getDbHandle();
-
   });
 
 

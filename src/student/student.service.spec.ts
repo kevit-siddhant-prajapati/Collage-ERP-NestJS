@@ -94,7 +94,7 @@ describe('StudentService', () => {
         }
       ]
       mockStudentModel.find.mockResolvedValue(mockStudents);
-      const result = await studentService.findAll();
+      const result : Student[] = await studentService.findAll();
       result.forEach(student => {
         delete student.password
         delete student.tokens
@@ -128,7 +128,7 @@ describe('StudentService', () => {
         attendance: 216
       }
         mockStudentModel.findById.mockResolvedValue(mockStudent);
-        const result = await studentService.findById('653365527f2450effb99f630');
+        const result : Student = await studentService.findById('653365527f2450effb99f630');
         delete result.password
         delete result.tokens
         expect(result).toEqual(outputStudent);
@@ -138,16 +138,17 @@ describe('StudentService', () => {
 
     describe('createOne', () => {
       it('should create a new student', async () => {
-        const studentData = {
-          name : "Lina",
-          email : "lina@example.com",
-          password : "Lina@1234",
-          phoneNumber : '1234567290',
-          department : "CE",
-          batch : 2020,
-          currentSem : 1,
-          attendance : 120,
-          tokens : []
+        const studentData : CreateStudentDto = {
+          name: "Lina",
+          email: "lina@example.com",
+          password: "Lina@1234",
+          phoneNumber: '1234567290',
+          department: "CE",
+          batch: 2020,
+          currentSem: 1,
+          attendance: 120,
+          tokens: [],
+          _id: '653365527f2490effb99f631'
         };
   
         const hashedPasswordStudent = '$2b$08$36sq1MNRqpERM8IejEv9Be9qsNy9UtmqGr5ObMDTkBhb5VoldTtJW'; // replace with actual hashed password
@@ -158,7 +159,7 @@ describe('StudentService', () => {
         
         mockStudentModel.create.mockResolvedValue(studentData);
   
-        const result = await studentService.createOne(studentData);
+        const result : Student = await studentService.createOne(studentData);
 
         expect(result).toEqual(studentData);
         expect(mockGenerateAuthToken).toHaveBeenCalled();
@@ -167,7 +168,7 @@ describe('StudentService', () => {
 
     describe('updateOne', () => {
       it('should update an existing student and return the updated data', async () => {
-        const mockStudent = { 
+        const mockStudent : UpdateStudentDto = { 
           //value that to be update
           name : "Mike",
           email : "mike@example.com",
@@ -187,7 +188,7 @@ describe('StudentService', () => {
         
         mockStudentModel.findByIdAndUpdate.mockResolvedValue(mockStudent)
 
-        const result = await studentService.updateOne('653365527f2490effb99f630', {
+        const result : Student = await studentService.updateOne('653365527f2490effb99f630', {
           //original value(in mock-data)
           attendance: 100,
           name: 'Linda',
@@ -197,7 +198,8 @@ describe('StudentService', () => {
           phoneNumber: '9087654321',
           batch: 2021,
           department: 'EC',
-          tokens: []
+          tokens: [],
+          _id: '653365527f2490effb99f630'
         })
 
         expect(result).toEqual(mockStudent);
@@ -206,7 +208,7 @@ describe('StudentService', () => {
 
   describe('deleteOne', () => {
     it('should delete a student and associated attendance data', async () => {
-      const mockStudent = { 
+      const mockStudent : Student = { 
         name : "Mike",
         email : "mike@example.com",
         password : "Mike@1234",
@@ -215,7 +217,6 @@ describe('StudentService', () => {
         batch : 2020,
         currentSem : 1,
         attendance : 120,
-        _id : '653365527f2490effb99f630', 
         tokens : []
        };
       mockStudentModel.findByIdAndDelete.mockResolvedValue(mockStudent)

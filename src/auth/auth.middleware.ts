@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware, NotFoundException } from "@nestjs/common";
+import { BadGatewayException, Injectable, NestMiddleware, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import * as jwt from "jsonwebtoken"
 import mongoose, { Model, Connection } from "mongoose";
@@ -22,12 +22,9 @@ export class StudentAuthMiddleware implements NestMiddleware{
      */
     async use(req: any, res: any, next: (error?: any) => void) {
         try {
-            //console.log('Student Middleware is implimented!')
             const token = req.header('Authorization')
             const tokenArr = token.split(' ')
-            //console.log(`token student middleware ${tokenArr[1]}`)
             const decoded: any = jwt.verify(tokenArr[1], process.env.JWT_SECRET_CODE)   
-            //console.log(`token is: ${token}`)
             if(!decoded){
                 throw new NotFoundException("token not generate")
             }
@@ -37,19 +34,14 @@ export class StudentAuthMiddleware implements NestMiddleware{
                     const StudentModel = dbtestConnection.model('Student', StudentSchema)
 
                     const student = await StudentModel.findOne({_id : decoded._id, 'tokens.token':tokenArr[1]})
-                    //console.log(dbtestConnection.getMongo())
-                    //console.log(student)
                     if(!student){
                         throw new Error('User not found')
                     }
-                    //console.log(`Student data is given below`)
                     debugger
-                    //console.log(student)
                     req.token = tokenArr[1]
                     req.student = student
-                    //console.log('Test Database')
                 }catch(e){
-                    console.log({error : e})
+                    throw new BadGatewayException(e)
                 }
                 next()
             } else {
@@ -57,10 +49,8 @@ export class StudentAuthMiddleware implements NestMiddleware{
                 if(!student){
                     throw new Error('User not found')
                 }
-                //console.log(student)
                 req.token = tokenArr[1]
                 req.student = student
-                //console.log('Development Database')
                 next()
             }  
             

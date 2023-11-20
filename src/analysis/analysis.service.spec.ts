@@ -1,10 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
 import { AnalysisService } from './analysis.service';
 import { Analysis1Dto } from './dto/analysis1.dto';
 import { Analysis2Dto } from './dto/analysis2.dto';
 import { Analysis3Dto } from './dto/analysis3.dto';
 import { Analysis4Dto } from './dto/analysis4.dto';
+import { Analysis4BodyDto } from './dto/analysis4-body.dto';
+import { Analysis2BodyDto } from './dto/analysis2-body.dto';
+import { Analysis3BodyDto } from './dto/analysis3-body.dto';
 
 const mockStudentModel = {
   aggregate : jest.fn()
@@ -67,8 +69,14 @@ describe('AnalysisService', () => {
           studentId : '6533635e9144267850a79b38'
         }
       ]
+      const analysisBody : Analysis2BodyDto = {
+        batch: 2020,
+        branch: 'EC',
+        semester: 1,
+        date: new Date('2021-06-20')
+      }
       mockAttendanceModel.aggregate.mockResolvedValue(mockAnalysis)
-      const result = await analysisService.analysis2(mockAnalysis)
+      const result = await analysisService.analysis2(analysisBody)
       expect(result).toBe(mockAnalysis)
     })
   })
@@ -93,8 +101,14 @@ describe('AnalysisService', () => {
           ]
         }
       ]
+      const analysisBody : Analysis3BodyDto = {
+        batch: 2020,
+        branch: 'CE',
+        semester: 1,
+        date: new Date('2021-06-20')
+      }
       mockAttendanceModel.aggregate.mockResolvedValue(mockAnalysis)
-      const result = await analysisService.analysis3(mockAnalysis)
+      const result = await analysisService.analysis3(analysisBody)
       expect(result).toBe(mockAnalysis)
     })
   })
@@ -137,8 +151,12 @@ describe('AnalysisService', () => {
           }
       }
       ]
+      const analysisBody : Analysis4BodyDto = {
+        batch: 2020,
+        branch: 'CE'
+      }
       mockAttendanceModel.aggregate.mockResolvedValue(mockAnalysis)
-      const result = await analysisService.analysis4(mockAnalysis)
+      const result = await analysisService.analysis4(analysisBody)
       expect(result).toBe(mockAnalysis)
     })
   })

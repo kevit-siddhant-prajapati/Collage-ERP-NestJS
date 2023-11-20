@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { UserHelper } from '../helper/user.helper';
 import { Attendance } from '../attendance/schemas/attendance.schema';
 import { logger } from '../logger/logger.service';
+import { UpdateStaffDto } from './dto/update-staff.dto';
 
 @Injectable()
 export class StaffService {
@@ -21,7 +22,7 @@ export class StaffService {
  * @returns {*}  {Promise<Staff[]>}
  */
     async findAll() : Promise<Staff[]>{
-      const staffs = await this.StaffModel.find({}, {
+      const staffs : Staff[] = await this.StaffModel.find({}, {
           createdAt : 0,
           __v : 0,
           password : 0,
@@ -40,7 +41,7 @@ export class StaffService {
      * @returns {*}  {Promise<Staff>}
      */
     async findById(id: string) : Promise<Staff>{
-      const staff = await this.StaffModel.findById(id,{
+      const staff : Staff = await this.StaffModel.findById(id,{
         createdAt : 0,
           __v : 0,
           password : 0,
@@ -64,7 +65,7 @@ export class StaffService {
      */
     async createOne(staffData : Staff) : Promise<Staff> {
       
-        const hashedpasswordStaff = await UserHelper.convertToHash(staffData)
+        const hashedpasswordStaff : string = await UserHelper.convertToHash(staffData)
         // using because test environment have different database and different staff model(mock-data)
         if(process.env.NODE_ENV === 'test'){  
           staffData.password = hashedpasswordStaff
@@ -74,14 +75,14 @@ export class StaffService {
         }
         // below else part use staffModel for development mongodb uri
         else {
-          const newStaff = new this.StaffModel(hashedpasswordStaff)
+          const newStaff : Staff = new this.StaffModel(hashedpasswordStaff)
           if(!newStaff){
             logger.error(`Invalid Staff data provided`)
             throw new BadRequestException('Enter valid Staffdata ')
           }
           try {
             UserHelper.generateAuthToken(newStaff)
-            logger.info(`Successfully generate new Staff of id: ${newStaff._id}`)
+            logger.info(`Successfully generate new Staff of id: ${newStaff}`)
             return newStaff
           } catch(e){
             logger.error(`Error : ${e}`)
@@ -96,15 +97,16 @@ export class StaffService {
      * @param {*} staffdata
      * @returns {*}  {Promise<Staff>}
      */
-    async updateOne(id : string, staffdata) : Promise<Staff> {
+    async updateOne(id : string, staffdata : UpdateStaffDto) : Promise<Staff> {
       if(process.env.NODE_ENV === 'test'){  //mock-data contain tokens array that not present in original data
         delete staffdata.tokens
+        delete staffdata._id
       }
         console.log(`updateable staff is call:`)
-        const updatable = ['name', 'email', 'password', 'phoneNumber', 'attendance', 'department']
-        const updateStaff = Object.keys(staffdata)
+        const updatable : Array<string> = ['name', 'email', 'password', 'phoneNumber', 'attendance', 'department']
+        const updateStaff : Array<string> = Object.keys(staffdata)
         // check for if update is valid or not
-        const isValidUpdate = updateStaff.every(update => updatable.includes(update))
+        const isValidUpdate : boolean = updateStaff.every(update => updatable.includes(update))
         if(!isValidUpdate){
           logger.error('Invalid update for Staff')
           throw new BadRequestException('not valid Update')
@@ -113,7 +115,7 @@ export class StaffService {
         if(staffdata.hasOwnProperty('password')){
           staffdata = await UserHelper.convertToHash(staffdata)
         }
-        const updatedStaff = await this.StaffModel.findByIdAndUpdate(id, staffdata)
+        const updatedStaff : Staff = await this.StaffModel.findByIdAndUpdate(id, staffdata)
         if(!updatedStaff){
           logger.error(`Unable to find Staff of id : ${id}`)
           throw new NotFoundException('Given staff not found')
@@ -128,13 +130,13 @@ export class StaffService {
      * @param {string} id
      */
     async deleteOne(id : string) {
-      const staff = await this.StaffModel.findByIdAndDelete(id)
+      const staff : Staff = await this.StaffModel.findByIdAndDelete(id)
         if(!staff){
           logger.error(`Unable to find Staff of Staff id : ${id}`)
           throw new NotFoundException('Unable to Staff of given id')
         }
         //delete attendance releted to that staff
-        await this.AttendanceModel.deleteMany({ userId : staff._id})
+        await this.AttendanceModel.deleteMany({ userId : staff})
         logger.info(`Successfully delete data of Staff: ${id}`)  
     }
 }

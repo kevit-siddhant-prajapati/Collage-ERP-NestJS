@@ -8,6 +8,9 @@ import { Analysis1Dto } from './dto/analysis1.dto';
 import { Analysis2Dto } from './dto/analysis2.dto';
 import { Analysis3Dto } from './dto/analysis3.dto';
 import { Analysis4Dto } from './dto/analysis4.dto';
+import { Analysis4BodyDto } from './dto/analysis4-body.dto';
+import { Analysis3BodyDto } from './dto/analysis3-body.dto';
+import { Analysis2BodyDto } from './dto/analysis2-body.dto';
 
 describe('AnalysisController', () => {
   let analysisController: AnalysisController;
@@ -68,8 +71,14 @@ describe('AnalysisController', () => {
         date : new Date('2021-06-20'),
         studentId : '6533635e9144267850a79b38'
       }]
+      const analysisInput : Analysis2BodyDto = {
+        batch: 2020,
+        branch: 'CE',
+        semester: 1,
+        date: new Date('2021-06-20')
+      } 
       jest.spyOn(analysisService, 'analysis2').mockResolvedValue(mockAnalysis)
-      expect(await analysisController.getAbsentStudent(mockAnalysis)).toBe(mockAnalysis)
+      expect(await analysisController.getAbsentStudent(analysisInput)).toBe(mockAnalysis)
     })
   })
 
@@ -91,8 +100,14 @@ describe('AnalysisController', () => {
           }
         ]
       }]
+      const analysisInput : Analysis3BodyDto = {
+        batch: 2020,
+        branch: 'CE',
+        semester: 1,
+        date: new Date('2021-06-20')
+      }
       jest.spyOn(analysisService, 'analysis3').mockResolvedValue(mockAnalysis)
-      expect(await analysisController.studentWithLessAttendance(mockAnalysis)).toBe(mockAnalysis)
+      expect(await analysisController.studentWithLessAttendance(analysisInput)).toBe(mockAnalysis)
     })
   })
 
@@ -133,8 +148,12 @@ describe('AnalysisController', () => {
         }
     }
       ]
+      const analysisInput : Analysis4BodyDto = {
+        batch: 2020,
+        branch: 'CE'
+      }
       jest.spyOn(analysisService, 'analysis4').mockResolvedValue(mockAnalysis)
-      expect(await analysisController.studentIntakeAnalysis(mockAnalysis)).toBe(mockAnalysis)
+      expect(await analysisController.studentIntakeAnalysis(analysisInput)).toBe(mockAnalysis)
     })
   })
   })

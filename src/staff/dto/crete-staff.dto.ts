@@ -1,5 +1,4 @@
-import { IsString, IsInt, IsIn, IsOptional, IsEnum, IsEmail, IsPhoneNumber } from 'class-validator';
-import { IsStringOrUndefined } from '../../student/pipe/IsStringOrUndefined.pipe';
+import { IsString, IsInt, IsOptional, IsEmail, IsPhoneNumber } from 'class-validator';
 
 /**
  * @description : this dto give information as well restrict staff when it is created

@@ -7,6 +7,9 @@ import { Analysis1Dto } from './dto/analysis1.dto';
 import { Analysis2Dto } from './dto/analysis2.dto';
 import { Analysis3Dto } from './dto/analysis3.dto';
 import { Analysis4Dto } from './dto/analysis4.dto';
+import { Analysis2BodyDto } from './dto/analysis2-body.dto';
+import { Analysis3BodyDto } from './dto/analysis3-body.dto';
+import { Analysis4BodyDto } from './dto/analysis4-body.dto';
 
 @Injectable()
 export class AnalysisService {
@@ -24,7 +27,7 @@ export class AnalysisService {
      */
     async analysis1() : Promise<Analysis1Dto[]>{
         try {
-            const student = await this.StudentModel.aggregate([
+            const student : Analysis1Dto[] = await this.StudentModel.aggregate([
                 // this pipe group the data according to batch the after year
                 //totalStudent count the number of student according to year
                 {
@@ -63,12 +66,10 @@ export class AnalysisService {
             ])
         
             if(!student) {
-                //studentsLogger.error('Data for analysis 1 not get')
                 throw new NotFoundException("Data not found")
             }
             return student
         } catch (e){
-            //studentsLogger.error('enable to get Analysis 1 details')
             throw new InternalServerErrorException(`Internal server error: ${e}`)
         }
        }
@@ -80,11 +81,10 @@ export class AnalysisService {
         * @param {*} inputData
         * @returns {*} 
         */
-       async analysis2(inputData) : Promise<Analysis2Dto[]>{
-        const date = inputData.date
-        const newDate = new Date(date)
-        //console.log(newDate)
-        const attendance = await this.AttendanceModel.aggregate([
+       async analysis2( inputData : Analysis2BodyDto) : Promise<Analysis2Dto[]>{
+        const date : Date = inputData.date
+        const newDate : Date = new Date(date)
+        const attendance : Analysis2Dto[] = await this.AttendanceModel.aggregate([
             //$match : pipe is select only data that is match with date
             {
                 $match : {
@@ -114,14 +114,14 @@ export class AnalysisService {
         * @param {*} inputData
         * @returns {*} 
         */
-       async analysis3(inputData) : Promise<Analysis3Dto[]>{
+       async analysis3(inputData : Analysis3BodyDto ) : Promise<Analysis3Dto[]>{
         try {
-            const specificDate = new Date(inputData.date); // Replace 'YYYY-MM-DD' with your specific date
-            const batchSize = inputData.batch || 2020; // Replace with the desired batch year
-            const branch = inputData.department || 'CE'; // Replace with the desired branch
-            const semester = inputData.currentSem || 1; // Replace with the desired semester
+            const specificDate : Date = new Date(inputData.date); // Replace 'YYYY-MM-DD' with your specific date
+            const batchSize : number = inputData.batch || 2020; // Replace with the desired batch year
+            const branch : string = inputData.branch || 'CE'; // Replace with the desired branch
+            const semester : number = inputData.semester || 1; // Replace with the desired semester
             
-            const result = await this.AttendanceModel.aggregate([
+            const result : Analysis3Dto[] = await this.AttendanceModel.aggregate([
             /**$lookup : this pipe used for getting data from student collection
              * it map userId of attendence with _id of student
              */
@@ -199,15 +199,11 @@ export class AnalysisService {
             }
             ]);
 
-            console.log(result);
-
             if(!result){
-                //res.status(404).send('student attendance data not found')
                 throw new NotFoundException('student attendance data not found')
             }
             return result
         } catch(e){
-            //studentsLogger.error('enable to get Analysis 2 details')
             throw new InternalServerErrorException('Internal Server Error!')
         }
        }
@@ -218,17 +214,17 @@ export class AnalysisService {
        * @param {*} inputData
        * @returns {*} 
        */
-      async analysis4(inputData) : Promise<Analysis4Dto[]>{
+      async analysis4( inputData : Analysis4BodyDto ) : Promise<Analysis4Dto[]>{
         try {
-            const result = await this.AttendanceModel.aggregate([
+            const result : Analysis4Dto[] = await this.AttendanceModel.aggregate([
                 /**
                  * $match : select date of Student Attendance , where date and status are optional
                 */
                 {
                   $match: {
-                    //date: { $gte: new Date('2021-06-18T00:00:00.000Z') }, // Add your date filter if needed
-                    roleOfUser: 'Student',
-                    //status: false // Assuming you want to consider only false status
+                    date : { $gte: new Date('2021-06-18T00:00:00.000Z') }, // Add your date filter if needed
+                    roleOfUser : 'Student',
+                    status: false 
                   }
                 },
                 /**
@@ -321,10 +317,8 @@ export class AnalysisService {
                 }
               ]);
               
-              console.log(result);
             return result
         } catch(e){
-            //res.status(500).send(`Internal Server Error : ${e}`)
             throw new InternalServerErrorException(`Internal Server Error : ${e}`)
         }
        }

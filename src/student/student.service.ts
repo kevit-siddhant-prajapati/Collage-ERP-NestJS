@@ -5,6 +5,8 @@ import * as mongoose from 'mongoose';
 import { UserHelper } from '../helper/user.helper';
 import { Attendance } from '../attendance/schemas/attendance.schema';
 import { logger } from '../logger/logger.service';
+import { CreateStudentDto } from './dto/create-student.dto';
+import { UpdateStudentDto } from './dto/update-student.dto';
 
 @Injectable()
 export class StudentService {
@@ -21,7 +23,7 @@ export class StudentService {
      * @returns {*}  {Promise<Student[]>}
      */
     async findAll() : Promise<Student[]>{
-        const students = await this.StudentModel.find({}, {
+        const students : Student[] = await this.StudentModel.find({}, {
           createdAt : 0,
           __v : 0,
           password : 0,
@@ -40,7 +42,7 @@ export class StudentService {
      * @returns {*}  {Promise<Student>}
      */
     async findById(id: string) : Promise<Student>{
-      const student = await this.StudentModel.findById(id,{
+      const student : Student = await this.StudentModel.findById(id,{
         createdAt : 0,
           __v : 0,
           password : 0,
@@ -57,8 +59,8 @@ export class StudentService {
      * @param {Student} studentData
      * @returns {*}  {Promise<Student>}
      */
-    async createOne(studentData : Student) : Promise<Student> {
-        const hashedpasswordStudent = await UserHelper.convertToHash(studentData)
+    async createOne(studentData : CreateStudentDto) : Promise<Student> {
+        const hashedpasswordStudent : string = await UserHelper.convertToHash(studentData)
         // using because test environment have different database and different student model(mock-data)
         if(process.env.NODE_ENV === 'test'){  
           studentData.password = hashedpasswordStudent
@@ -68,14 +70,14 @@ export class StudentService {
         } 
         // below else part use studentModel for development mongodb uri
         else {
-          const newStudent = new this.StudentModel(hashedpasswordStudent)
+          const newStudent : Student = new this.StudentModel(hashedpasswordStudent)
           if(!newStudent){
             logger.error(`Bad Request Exception`)
             throw new BadRequestException('Enter valid Studentdata ')
           }
           try {
             await UserHelper.generateAuthToken(newStudent)
-            logger.info(`new Student is created of student id : ${newStudent._id}`)
+            logger.info(`new Student is created of student id : ${newStudent}`)
             return newStudent
           } catch(e){
             logger.error(`Error generate : ${e}`)
@@ -91,14 +93,15 @@ export class StudentService {
  * @param {Student} studentdata : updateable data
  * @returns {*}  {Promise<Student>} return value shold be Student type
  */
-    async updateOne(id : string, studentdata: Student) : Promise<Student> {
+    async updateOne(id : string, studentdata: UpdateStudentDto) : Promise<Student> {
       if(process.env.NODE_ENV === 'test'){  //mock-data contain tokens array that not present in original data
         delete studentdata.tokens
+        delete studentdata._id
       }
-        const updatable = ['name', 'email', 'currentSem', 'password', 'phoneNumber', 'batch', 'attendance', 'department']
-        const updateStudent = Object.keys(studentdata)
+        const updatable : Array<string> = ['name', 'email', 'currentSem', 'password', 'phoneNumber', 'batch', 'attendance', 'department']
+        const updateStudent : Array<string> = Object.keys(studentdata)
         //check for up update is valid or not
-        const isValidUpdate = updateStudent.every(update => updatable.includes(update))
+        const isValidUpdate : boolean = updateStudent.every(update => updatable.includes(update))
         if(!isValidUpdate){
           logger.error(` Not valid Update for student`)
           throw new BadRequestException('not valid Update')
@@ -107,7 +110,7 @@ export class StudentService {
         if(studentdata.hasOwnProperty('password')){     
           studentdata = await UserHelper.convertToHash(studentdata)
         }
-        const updatedStudent = await this.StudentModel.findByIdAndUpdate(id, studentdata)
+        const updatedStudent : Student = await this.StudentModel.findByIdAndUpdate(id, studentdata)
         if(process.env.NODE_ENV === 'test'){
           return updatedStudent
         }
@@ -125,12 +128,12 @@ export class StudentService {
      * @param {string} id
      */
     async deleteOne(id : string) {
-      const student = await this.StudentModel.findByIdAndDelete(id)
+      const student : Student = await this.StudentModel.findByIdAndDelete(id)
         if(!student){
           throw new NotFoundException('Given student not found')
         }
         //delete attendance releted to that perticular student
-        await this.AttendanceModel.deleteMany({ userId : student._id}) 
+        await this.AttendanceModel.deleteMany({ userId : student}) 
         logger.info(`Succefully delete student of id : ${id}`)
     }
 

@@ -13,35 +13,35 @@ export class UpdateStudentDto {
     //@IsStringOrUndefined()
     _id : string | undefined;
     @IsString()
-    readonly name :string
+    name :string
 
     @IsOptional()
     @IsString()
-    readonly email:string
+    email:string
 
     @IsOptional()
     @IsInt()
-    readonly currentSem:number
+    currentSem:number
 
     @IsOptional()
     @IsString()
-    readonly password:string
+    password:string
 
     @IsOptional()
     @IsString()
-    readonly phoneNumber : string
+    phoneNumber : string
 
     @IsOptional()
     @IsInt()
-    readonly batch : number
+    batch : number
 
     @IsOptional()
     @IsString()
-    readonly department : string
+    department : string
 
     @IsOptional()
     @IsInt()
-    readonly attendance : number
+    attendance : number
 
     @IsOptional()
     tokens: Array<{ token: string }>;

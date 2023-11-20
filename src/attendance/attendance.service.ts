@@ -38,7 +38,7 @@ export class AttendanceService {
                     roleOfUser : "Student"
                 }
                 //crate new attendance document for each provided id in array
-                const newAttendance = await this.AttendanceModel.create(attendanceDetail)
+                const newAttendance : Attendance = await this.AttendanceModel.create(attendanceDetail)
                 if(!newAttendance){
                     logger.error(`Attendance of Student id: ${student._id} is created as present`)
                     throw new BadRequestException(`Unable to fill student attendance`)
@@ -55,7 +55,7 @@ export class AttendanceService {
                     roleOfUser : "Student"
                 }
                 //create new attendance document for student that are not present in array
-                const newAttendance = await this.AttendanceModel.create(attendanceDetail)
+                const newAttendance : Attendance = await this.AttendanceModel.create(attendanceDetail)
                 if(!newAttendance){
                     logger.error(`Attendance of Student id: ${notAttendStudent._id} is created as absent`)
                     throw new BadRequestException(`Unable to fill student attendance`)
@@ -75,7 +75,7 @@ export class AttendanceService {
      * @returns {*} 
      */
     async fillStaffAttendance(attendanceData :fillAttendanceDto) {
-        const attendStaff = attendanceData.attendance;
+        const attendStaff : Array<string> = attendanceData.attendance;
         for (const attendie of attendStaff) {
             //find data of each staff that is given in array
             const staff = await this.StaffModel.findById(attendie);
@@ -136,16 +136,16 @@ export class AttendanceService {
             delete attendanceData.roleOfUser
             delete attendanceData.userId
         } 
-            const updatable = [ 'status', 'date']
-            const updateAttend = Object.keys(attendanceData)
+            const updatable : Array<string> = [ 'status', 'date']
+            const updateAttend : Array<string> = Object.keys(attendanceData)
             //check if given all update is valid or not
-            const isValidUpdate = updateAttend.every(update => updatable.includes(update))
+            const isValidUpdate : boolean = updateAttend.every(update => updatable.includes(update))
             if(!isValidUpdate){
                 logger.error('Invalid attendance update')
                 throw new BadRequestException('not valid Update')
             }
          
-            const updateAttendance = await this.AttendanceModel.findByIdAndUpdate(id, attendanceData)
+            const updateAttendance : Attendance = await this.AttendanceModel.findByIdAndUpdate(id, attendanceData)
             if(!updateAttendance){
                 logger.error('Given attendance not found')
                 throw new NotFoundException('Given ATTENDANCE not found')
@@ -161,7 +161,7 @@ export class AttendanceService {
      * @returns {*}  {Promise<Attendance[]>}
      */
     async getAttendanceByRole(role : Attendance): Promise<Attendance[]>{
-        const attendances = await this.AttendanceModel.find(role)
+        const attendances : Attendance[] = await this.AttendanceModel.find(role)
         if(!attendances){
             logger.error(`Unable find attendance of given role ${role}`)
             throw new BadRequestException(`Unable to find attendance of ${role}'s`)

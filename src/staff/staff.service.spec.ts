@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { StaffService } from './staff.service';
 import { Staff } from './schemas/staff.schema';
 import { UserHelper } from '../helper/user.helper';
+import { UpdateStaffDto } from './dto/update-staff.dto';
 
 const mockStaffModel = {
   find: jest.fn(),
@@ -79,7 +80,7 @@ describe('StaffService', () => {
         },
       ]
       mockStaffModel.find.mockResolvedValue(mockStaffs);
-      const result = await staffService.findAll();
+      const result : Staff[] = await staffService.findAll();
       result.forEach(staff => {
         delete staff.password
         delete staff.tokens
@@ -101,7 +102,7 @@ describe('StaffService', () => {
           attendance: 216,
           tokens : []
       };
-      const outputStaff = {
+      const outputStaff  = {
         name: "Kevin",
           email: "kevin@example.com",
           phoneNumber: '8864000809',
@@ -118,7 +119,7 @@ describe('StaffService', () => {
 
     describe('createOne', () => {
       it('should create a new student', async () => {
-        const staffData = {
+        const staffData : Staff = {
           name : "Lina",
           email : "lina@example.com",
           password : "Lina@1234",
@@ -128,7 +129,7 @@ describe('StaffService', () => {
           tokens : []
         };
   
-        const hashedPasswordStaff = '$2b$08$36sq1MNRqpERM8IejEv9Be9qsNy9UtmqGr5ObMDTkBhb5VoldTtJW'; // replace with actual hashed password
+        const hashedPasswordStaff : string = '$2b$08$36sq1MNRqpERM8IejEv9Be9qsNy9UtmqGr5ObMDTkBhb5VoldTtJW'; // replace with actual hashed password
 
         jest.spyOn(UserHelper, 'convertToHash').mockResolvedValue(hashedPasswordStaff);
   
@@ -136,7 +137,7 @@ describe('StaffService', () => {
         
         mockStaffModel.create.mockResolvedValue(staffData);
   
-        const result = await staffService.createOne(staffData);
+        const result : Staff = await staffService.createOne(staffData);
 
         expect(result).toEqual(staffData);
         expect(mockGenerateAuthToken).toHaveBeenCalled();
@@ -145,7 +146,7 @@ describe('StaffService', () => {
 
     describe('updateOne', () => {
       it('should update an existing student and return the updated data', async () => {
-        const mockStaff = { 
+        const mockStaff : UpdateStaffDto = { 
           //value that to be update
           name : "Mike",
           email : "mike@example.com",
@@ -163,7 +164,7 @@ describe('StaffService', () => {
         
         mockStaffModel.findByIdAndUpdate.mockResolvedValue(mockStaff)
 
-        const result = await staffService.updateOne('653365527f2490effb99f630', {
+        const result : Staff = await staffService.updateOne('653365527f2490effb99f630', {
           //original value(in mock-data)
           attendance: 100,
           name: 'Linda',
@@ -171,7 +172,8 @@ describe('StaffService', () => {
           password: 'Linda@123',
           phoneNumber: '9087654321',
           department: 'EC',
-          tokens: []
+          tokens: [],
+          _id: '653365527f2490effb99f630'
         })
 
         expect(result).toEqual(mockStaff);
@@ -180,14 +182,13 @@ describe('StaffService', () => {
 
   describe('deleteOne', () => {
     it('should delete a student and associated attendance data', async () => {
-      const mockStaff = { 
+      const mockStaff : Staff= { 
         name : "Mike",
         email : "mike@example.com",
         password : "Mike@1234",
         phoneNumber : '1234567290',
         department : "CE",
         attendance : 120,
-        _id : '653365527f2490effb99f630', 
         tokens : []
        };
       mockStaffModel.findByIdAndDelete.mockResolvedValue(mockStaff)
