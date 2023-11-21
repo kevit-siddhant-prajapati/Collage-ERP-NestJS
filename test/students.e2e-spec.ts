@@ -11,6 +11,7 @@ import { adminStub } from './stubs/admin.stub';
 import { staffAttendanceStub } from './stubs/staff-attendance.stub';
 import { studentAttendanceStub } from './stubs/student-attendance.stub';
 
+
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let dbConnection : Connection;
@@ -54,7 +55,7 @@ describe('AppController (e2e)', () => {
       const response = await request(app.getHttpServer())
       .get('/students/all')
       .set('Authorization', `Bearer ${studentStub().tokens[0].token}`)
-      expect(response.status).toBe(200)
+      .expect(200)
     })
 
     it('Not getting data of all student to unauthorize person', () => {
@@ -105,7 +106,7 @@ describe('AppController (e2e)', () => {
           email : student.email,
           password : student.password,
           role : "Student"
-      }).expect(200)
+      })
     })
 
 

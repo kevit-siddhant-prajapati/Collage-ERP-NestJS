@@ -1,5 +1,4 @@
 
-import mongoose from "mongoose";
 import { studentStub } from "./students.stub";
 import { ObjectId } from "bson";
 

@@ -1,6 +1,5 @@
 import { Schema, Prop, SchemaFactory, raw } from "@nestjs/mongoose";
 import validator from "validator";
-import * as bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
 /**

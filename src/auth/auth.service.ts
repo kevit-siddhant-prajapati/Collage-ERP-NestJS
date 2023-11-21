@@ -23,22 +23,12 @@ export class AuthService {
  * @returns {*}  {Promise<Student>}
  */
 async loginStudent(credentials : LoginUserDto | any) : Promise<Student>{
-      if(process.env.NODE_ENV === 'test'){
-        const password : string = credentials.password
-        await UserHelper.convertToHash(credentials)
-        const valid : boolean = await UserHelper.findByCredentials(password, credentials.password)
-        if(valid){
-          return credentials
-        }
-      }
+      const password : string = credentials.password
         const email : string = credentials.email
-        const password : string = credentials.password
         const student : Student = await this.StudentModel.findOne({ email : email });
-        if (!student) {
-          logger.error(`Given student of credential not found ${credentials}`)
-          throw new NotFoundException('Given student not found')
+        if(process.env.NODE_ENV === 'test'){
+          await UserHelper.convertToHash(student)
         }
-        console.log(student)
         const valid = await UserHelper.findByCredentials(password,student.password)
         await UserHelper.generateAuthToken(student)
         if(valid){
@@ -54,20 +44,11 @@ async loginStudent(credentials : LoginUserDto | any) : Promise<Student>{
        * @returns {*}  {Promise<Staff>}
        */
       async loginStaff(credentials : LoginUserDto | any ) : Promise<Staff>{
-        if(process.env.NODE_ENV === 'test'){
-          const password : string = credentials.password
-          await UserHelper.convertToHash(credentials)
-          const valid : boolean = await UserHelper.findByCredentials(password, credentials.password)
-          if(valid){
-            return credentials
-          }
-        }
-        const email : string = credentials.email
         const password : string = credentials.password
+        const email : string = credentials.email
         const staff : Staff = await this.StaffModel.findOne({ email : email });
-        if (!staff) {
-          logger.error(`Given staff of credential not found ${credentials}`)
-          throw new NotFoundException('Given staff not found')
+        if(process.env.NODE_ENV === 'test'){
+          await UserHelper.convertToHash(staff)
         }
         await UserHelper.findByCredentials(password, staff.password)
         await UserHelper.generateAuthToken(staff)
@@ -82,25 +63,16 @@ async loginStudent(credentials : LoginUserDto | any) : Promise<Student>{
  * @returns {*}  {Promise<Staff>}
  */
       async loginAdmin(credentials : LoginUserDto | any ) : Promise<Admin>{
-        if(process.env.NODE_ENV === 'test'){
-          const password : string = credentials.password
-          await UserHelper.convertToHash(credentials)
-          const valid : boolean = await UserHelper.findByCredentials(password, credentials.password)
-          if(valid){
-            return credentials
-          }
-        }
-        const email : string = credentials.email
         const password : string = credentials.password
+        const email : string = credentials.email
         const admin : Admin = await this.AdminModel.findOne({ email : email });
-        if (!admin) {
-          logger.error(`Given admin of credential not found ${credentials}`)
-          throw new NotFoundException('Given admin not found')
+        if(process.env.NODE_ENV === 'test'){
+          await UserHelper.convertToHash(admin)
         }
-        await UserHelper.findByCredentials(password, admin.password)
-        await UserHelper.generateAuthToken(admin)
-        if(UserHelper.findByCredentials(password, admin.password)){
-          logger.info(`Staff successfully login`)
+        const login = await UserHelper.findByCredentials(password, admin.password)
+         await UserHelper.generateAuthToken(admin)
+        if(login){
+          logger.info(`Admin successfully login`)
           return admin
         }
       }

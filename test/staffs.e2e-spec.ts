@@ -60,9 +60,28 @@ describe('AppController (e2e)', () => {
         const response = await request(app.getHttpServer())
         .get('/staffs/all')
         .set('Authorization', `Bearer ${staffStub().tokens[0].token}`)
-        expect(response.status).toBe(200)
+        .expect(200)
     })
   
+  })
+  describe('loginStaff', () => {
+    it('Should login existing Staff', async () => {
+      const staff = staffStub()
+        const response = await request(app.getHttpServer()).post('/auth/login').send({
+            email : staff.email,
+            password : staff.password,
+            role : "Staff"
+        }).expect(200)
+    })
+    
+    it('Should not login nonexisting Admin', async () => {
+      const staff = staffStub()
+        await request(app.getHttpServer()).post('/auth/login').send({
+            email : staff.email,
+            password : '1234qwer',
+            role : "Staff"
+        }).expect(401)
+    })
   })
 
 
@@ -135,7 +154,7 @@ describe('AppController (e2e)', () => {
   describe('updateStaff', () => {
     it('Should update valid staff fields', async () => {
       const staff: any = staffStub()
-      const result = await request(app.getHttpServer())
+       await request(app.getHttpServer())
       .patch(`/staffs/update/${staff._id}`)
       .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
       .send({

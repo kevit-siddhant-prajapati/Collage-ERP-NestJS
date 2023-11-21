@@ -10,9 +10,7 @@ import { IsStringOrUndefined } from '../pipe/IsStringOrUndefined.pipe';
 export class UpdateStudentDto {
 
     @IsOptional()
-    //@IsStringOrUndefined()
     _id : string | undefined;
-    @IsString()
     name :string
 
     @IsOptional()

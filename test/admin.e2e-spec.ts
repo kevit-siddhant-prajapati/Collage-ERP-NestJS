@@ -10,6 +10,7 @@ import { staffStub } from './stubs/staff.stub';
 import { adminStub } from './stubs/admin.stub';
 import { staffAttendanceStub } from './stubs/staff-attendance.stub';
 import { studentAttendanceStub } from './stubs/student-attendance.stub';
+import { UserHelper } from '../src/helper/user.helper';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -61,6 +62,7 @@ describe('AppController (e2e)', () => {
       }).expect(201)
 
   })
+})
   
 
 describe('loginAdmin', () => {
@@ -83,7 +85,22 @@ describe('loginAdmin', () => {
   })
 })
   
+describe('getAllAdmin', () => {
 
+  it('Not getting data of all admin to unauthorize person', () => {
+    return request(app.getHttpServer())
+      .get('/admin/all')
+      .expect(401)
+  });
+
+  it('autherize user can see the all staff', async () => { 
+      await request(app.getHttpServer())
+      .get('/admin/all')
+      .set('Authorization', `Bearer ${adminStub().tokens[0].token}`)
+      .expect(200)
+  })
+
+})
 describe('deleteAdmin', () => {
   it('should delete account for admin', async () => {
     const admin : any= adminStub()
@@ -113,9 +130,8 @@ describe('updateAdmin', () => {
 
 
   it('Should not update admin with unauthorize users', async () => {
-    const staff = staffStub()
       await request(app.getHttpServer())
-     .patch(`/admin/update/${staffStub()._id}`)
+     .patch(`/admin/update/${adminStub()._id}`)
      .send({
          location : "Rajkot"
      })
@@ -123,5 +139,4 @@ describe('updateAdmin', () => {
   })
 })
 
-})
 })

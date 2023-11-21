@@ -1,7 +1,4 @@
-import mongoose from "mongoose";
-import * as jwt from 'jsonwebtoken'
-import { Admin } from "../../src/admin/schemas/admin.schema";
-import { Staff } from "../../src/staff/schemas/staff.schema";
+
 import { ObjectId } from "bson";
 
 export const staffStub = ()  => {
@@ -14,7 +11,8 @@ export const staffStub = ()  => {
         department : 'CE',
         attendance : 120,
         tokens : [{
-            token : jwt.sign({_id : new ObjectId("6556eb0e3e72dd881bac84fb")}, process.env.JWT_SECRET_CODE)
+            //token : jwt.sign({_id : new ObjectId("6556eb0e3e72dd881bac84fb")}, process.env.JWT_SECRET_CODE)
+            token : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTU2ZWIwZTNlNzJkZDg4MWJhYzg0ZmIiLCJpYXQiOjE3MDA1NDExMjh9.gVSmmvL5xarH4e0uVvmRCEKDS0NZeTAsieosOfEpd2g'
         }]
     }
 }

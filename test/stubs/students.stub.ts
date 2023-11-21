@@ -1,6 +1,3 @@
-import mongoose from "mongoose";
-import { Student } from "../../src/student/schemas/student.schema";
-import * as jwt from 'jsonwebtoken'
 import { ObjectId } from "bson";
 
 export const studentStub = ()  => {
@@ -15,9 +12,8 @@ export const studentStub = ()  => {
         currentSem : 1,
         attendance : 120,
         tokens : [{
-            token : jwt.sign({_id : new ObjectId("654c90d94d320ee33c106517")}, process.env.JWT_SECRET_CODE)
+            token : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTRjOTBkOTRkMzIwZWUzM2MxMDY1MTciLCJpYXQiOjE3MDA1NDA5NzF9.NbmvDzPYwdQYW_IahlnHAUKAcsBP9vbRYAyb8LKGvHQ'
         }]
         }
-        //console.log(`Generated token: ${studentOne.tokens[0].token}`);
     return studentOne
 }
